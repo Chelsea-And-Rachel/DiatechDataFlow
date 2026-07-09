@@ -1,0 +1,412 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product & Data Flow — Shopify Architecture</title>
+<style>
+  :root{
+    --bg:#F4F6F9; --panel:#FFFFFF; --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE;
+    --accent:#E0912F;              /* Sunny Road amber */
+    --shopify:#4C8B2B; --sap:#0A6ED1; --pim:#6D4FB0; --odoo:#8A4E76; --net32:#C6602E; --customer:#455066;
+    --flow-content:#6D5AE6; --flow-inventory:#E0912F; --flow-orders:#D6336C; --flow-sync:#0F9E8E; --flow-shop:#8A97A8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 560px at 50% -12%, #FCF6EC 0%, rgba(252,246,236,0) 58%),
+      linear-gradient(180deg,#EEF1F7 0%, #E6EAF1 100%);
+    background-attachment:fixed; color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 22px 48px}
+  .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); font-weight:700; margin:0 0 6px}
+  h1{font-size:26px; font-weight:750; letter-spacing:-.01em; margin:0 0 6px}
+  .sub{color:var(--muted); font-size:14px; margin:0 0 20px; max-width:720px}
+
+  /* toggle */
+  .toggle{display:inline-flex; background:#EDF0F5; border:1px solid var(--line); border-radius:999px; padding:4px; gap:4px; margin-bottom:8px}
+  .toggle button{
+    border:0; background:transparent; cursor:pointer; font:inherit; font-weight:600; font-size:13.5px;
+    color:var(--muted); padding:9px 16px; border-radius:999px; transition:all .18s ease;
+  }
+  .toggle button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:1px;opacity:.55}
+  .toggle button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:0 1px 3px rgba(20,30,50,.12)}
+  .toggle button[aria-pressed="true"] .dot{opacity:1;background:var(--accent)}
+  .hint{font-size:12.5px;color:var(--muted);margin:6px 0 16px}
+  .hint b{color:var(--ink);font-weight:600}
+  .hoverhint{display:inline-block; margin-left:6px; padding:2px 10px; border-radius:999px;
+    background:rgba(224,145,47,.13); color:#B0712A; font-weight:600; font-size:11.5px; letter-spacing:.01em}
+
+  /* stage */
+  .stage-wrap{position:relative; overflow:hidden; margin:2px auto 0; border-radius:22px;
+    background:
+      radial-gradient(560px 380px at 64% 40%, rgba(76,139,43,.11), rgba(76,139,43,0) 70%),
+      radial-gradient(420px 320px at 13% 14%, rgba(224,145,47,.13), rgba(224,145,47,0) 72%),
+      radial-gradient(420px 340px at 92% 92%, rgba(109,90,230,.09), rgba(109,90,230,0) 72%),
+      linear-gradient(160deg,#FAFCFE 0%, #EFF3F9 100%);
+    border:1px solid rgba(28,36,48,.09);
+    box-shadow:0 26px 60px -30px rgba(23,33,52,.42), inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .stage-wrap::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(28,42,64,.11) 1.1px, transparent 1.3px);
+    background-size:26px 26px; background-position:13px 13px; opacity:.55;
+    -webkit-mask-image:radial-gradient(130% 105% at 50% 42%, #000 52%, transparent 100%);
+    mask-image:radial-gradient(130% 105% at 50% 42%, #000 52%, transparent 100%);}
+  .stage{position:relative; width:1140px; height:600px; transform-origin:top left; z-index:1}
+  #svg{position:absolute; inset:0; width:1140px; height:600px; overflow:visible}
+  .node .ic svg{display:block}
+  .fdot{filter:drop-shadow(0 0 3px rgba(255,255,255,.9))}
+
+  .node{
+    position:absolute; transform:translate(-50%,-50%); background:var(--panel);
+    border:1px solid var(--line); border-radius:15px; padding:13px 15px 12px;
+    box-shadow:0 6px 18px rgba(23,33,52,.07); cursor:default; transition:opacity .3s ease, filter .3s ease, transform .18s ease;
+    display:flex; gap:11px; align-items:center;
+  }
+  .node:hover{transform:translate(-50%,-50%) translateY(-3px); box-shadow:0 14px 30px rgba(23,33,52,.16), 0 0 0 2px var(--nc, var(--line))}
+  .node .ic{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;color:#fff}
+  .node .tx .nm{font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1.15}
+  .node .tx .rl{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.25}
+  .node.big{border-radius:18px;padding:16px 20px}
+  .node.big .ic{width:46px;height:46px;border-radius:13px}
+  .node.big .tx .nm{font-size:18px}
+  .node .badge{
+    position:absolute; top:-11px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    font-size:10.5px; font-weight:700; letter-spacing:.03em; padding:3px 9px; border-radius:999px;
+    background:var(--ink); color:#fff; opacity:0; transition:opacity .25s ease; pointer-events:none;
+  }
+  .node .badge.show{opacity:1}
+  .node .badge.warn{background:#B0472B}
+  .node .badge.good{background:var(--shopify)}
+  .node.dim{opacity:.34; filter:grayscale(.7)}
+
+  /* flow labels */
+  .flabel{
+    position:absolute; transform:translate(-50%,-50%); background:var(--panel);
+    border:1px solid var(--line); border-radius:999px; padding:5px 11px 5px 9px; font-size:12px; font-weight:600;
+    box-shadow:0 3px 9px rgba(23,33,52,.09); cursor:default; display:flex; align-items:center; gap:7px; white-space:nowrap;
+    transition:opacity .3s ease, transform .18s ease; z-index:3;
+  }
+  .flabel:hover{transform:translate(-50%,-50%) scale(1.05)}
+  .flabel .swatch{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+  /* legend */
+  .legend{margin-top:26px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px}
+  .legend h3{margin:0 0 13px; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  .legrow{display:flex; flex-wrap:wrap; gap:18px 26px}
+  .leg{display:flex; align-items:center; gap:9px; font-size:13px}
+  .leg .ln{width:30px;height:0;border-top-width:3px;border-top-style:solid;border-radius:2px}
+  .leg .ln.dashed{border-top-style:dashed}
+  .caption{margin-top:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+  .caption b{color:var(--ink);font-weight:600}
+
+  /* tooltip */
+  #tip{
+    position:fixed; z-index:50; max-width:290px; background:#1C2430; color:#F4F6F9;
+    border-radius:11px; padding:11px 13px; font-size:12.8px; line-height:1.5; box-shadow:0 10px 30px rgba(10,15,30,.28);
+    opacity:0; transform:translateY(4px); transition:opacity .13s ease, transform .13s ease; pointer-events:none;
+  }
+  #tip.show{opacity:1; transform:translateY(0)}
+  #tip .th{font-weight:700; font-size:13px; margin-bottom:3px; display:flex; align-items:center; gap:7px}
+  #tip .th .sw{width:9px;height:9px;border-radius:50%}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Sunny Road · Ecommerce Architecture</p>
+  <h1>How product data, inventory & orders flow</h1>
+
+  <div class="toggle" role="group" aria-label="Choose a scenario">
+    <button id="btn-connected" aria-pressed="true"><span class="dot"></span>Option 1 — Keep the PIM (connected)</button>
+    <button id="btn-migrated" aria-pressed="false"><span class="dot"></span>Option 2 — Everything in Shopify (migrated)</button>
+  </div>
+  <p class="hint">Currently showing: <b id="scenario-name">Keep the PIM</b> — <span id="scenario-desc">product content is managed in the PIM and synced into Shopify.</span> <span class="hoverhint">✦ hover any box or line for details</span></p>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" viewBox="0 0 1140 600" aria-hidden="true">
+        <defs id="defs"></defs>
+        <g id="paths"></g>
+      </svg>
+      <!-- nodes & labels injected here -->
+    </div>
+  </div>
+
+  <div class="legend">
+    <h3>Legend</h3>
+    <div class="legrow" id="legend-flows"></div>
+    <div class="legrow" style="margin-top:14px">
+      <div class="leg"><span class="ln" style="border-color:#9AA6B6"></span> Ongoing sync (kept up to date automatically)</div>
+      <div class="leg"><span class="ln dashed" style="border-color:#9AA6B6"></span> One-time migration (moved once, then done)</div>
+    </div>
+    <p class="caption"><b>Note:</b> This is a proposed flow for discussion. <b>Pricing is managed in Shopify.</b> A few details are still being confirmed — for example, whether products not yet in the PIM are covered at launch. Hover any box or line for more.</p>
+  </div>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+/* ---------- icons ---------- */
+const IC = {
+  shopify:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+  sap:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
+  pim:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg>',
+  odoo:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l2-2h5l2 2h7a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z"/></svg>',
+  net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+  customer:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+};
+
+/* ---------- nodes ---------- */
+const NODES = {
+  net32:   {x:150, y:105, w:174,h:74, name:'Net32', role:'Dental supply marketplace', color:'var(--net32)', ic:IC.net32,
+            tip:'A third-party marketplace where the products are also listed. It connects to the PIM so its listings stay in step with your catalog.'},
+  odoo:    {x:150, y:470, w:174,h:74, name:'Odoo', role:'Existing product data', color:'var(--odoo)', ic:IC.odoo,
+            tip:'Where a lot of the current product data lives today. Its data is brought into the setup as part of the move to Shopify.'},
+  pim:     {x:430, y:290, w:186,h:82, name:'PIM', role:'Product content hub', color:'var(--pim)', ic:IC.pim,
+            tip:'The Product Information Management system. It owns rich product content — titles, descriptions, images, specs and attributes — and keeps it clean and consistent for every channel.'},
+  shopify: {x:745, y:210, w:224,h:118,name:'Shopify', role:'Your online store', color:'var(--shopify)', ic:IC.shopify, big:true,
+            tip:'The storefront customers actually see and buy from. Pricing is managed here. Depending on the option chosen, it either pulls product content from the PIM, or holds all of it directly.'},
+  customer:{x:1010,y:210, w:150,h:78, name:'Customer', role:'Shops & orders', color:'var(--customer)', ic:IC.customer,
+            tip:'The shopper. They browse the catalog and place orders on the Shopify store.'},
+  sap:     {x:745, y:475, w:200,h:92, name:'SAP', role:'ERP — the back office', color:'var(--sap)', ic:IC.sap,
+            tip:'The ERP that runs the business: fulfilment, invoicing and stock. It owns inventory levels and receives every order. Pricing is managed in Shopify, not here.'}
+};
+
+/* ---------- flow types ---------- */
+const FLOW = {
+  content:  {color:'var(--flow-content)',  hex:'#6D5AE6', label:'Product information'},
+  inventory:{color:'var(--flow-inventory)',hex:'#E0912F', label:'Inventory levels'},
+  orders:   {color:'var(--flow-orders)',   hex:'#D6336C', label:'Orders'},
+  sync:     {color:'var(--flow-sync)',     hex:'#0F9E8E', label:'Marketplace sync'},
+  shop:     {color:'var(--flow-shop)',     hex:'#8A97A8', label:'Browse & buy'}
+};
+
+/* ---------- scenarios ---------- */
+const SCENARIOS = {
+  connected:{
+    name:'Keep the PIM',
+    desc:'product content is managed in the PIM and synced live into Shopify; SAP still owns inventory and receives orders; pricing lives in Shopify.',
+    active:['net32','odoo','pim','shopify','customer','sap'],
+    badges:{shopify:''},
+    flows:[
+      {from:'net32', to:'pim', type:'sync', two:true, curve:24, lnudge:-24, label:'Marketplace sync',
+       tip:'Net32 and the PIM stay in step so the marketplace listings match your catalog. One-way or two-way is still to be confirmed.'},
+      {from:'odoo', to:'pim', type:'content', dash:true, curve:-24, lnudge:26, label:'Loaded in',
+       tip:'Existing product data from Odoo is brought into the PIM so the PIM holds the complete, enriched catalog.'},
+      {from:'pim', to:'shopify', type:'content', curve:-26, lnudge:-26, label:'Product information',
+       tip:'The PIM is the single source of truth for product content and feeds titles, descriptions, images and attributes to the storefront.'},
+      {from:'sap', to:'shopify', type:'inventory', curve:52, lnudge:46, label:'Inventory',
+       tip:'SAP owns stock levels. Inventory syncs up to Shopify so the store shows accurate availability.'},
+      {from:'shopify', to:'sap', type:'orders', curve:52, lnudge:46, label:'Orders',
+       tip:'When a customer places an order it flows from Shopify into SAP for fulfilment and invoicing.'},
+      {from:'customer', to:'shopify', type:'shop', two:true, curve:0, lnudge:-24, label:'Browse & buy',
+       tip:'Shoppers browse the catalog and place orders on the Shopify store.'}
+    ]
+  },
+  migrated:{
+    name:'Everything in Shopify',
+    desc:'product data is migrated once and Shopify manages it directly; SAP still owns inventory and receives orders; pricing lives in Shopify.',
+    active:['odoo','pim','shopify','customer','sap'],
+    dim:['net32','pim','odoo'],
+    badges:{shopify:{t:'Product info lives here', c:'good'}, pim:{t:'Retired after migration', c:'warn'}, net32:{t:'Not connected', c:'warn'}, odoo:{t:'Migrated once', c:''}},
+    flows:[
+      {from:'odoo', to:'shopify', type:'content', dash:true, curve:-30, lnudge:28, label:'One-time migration',
+       tip:'All product data is migrated once from Odoo directly into Shopify.'},
+      {from:'pim', to:'shopify', type:'content', dash:true, curve:-20, lnudge:-26, label:'One-time migration',
+       tip:'Any product content in the PIM is migrated once into Shopify. After that the PIM is no longer needed.'},
+      {from:'sap', to:'shopify', type:'inventory', curve:52, lnudge:46, label:'Inventory',
+       tip:'SAP still owns stock levels and syncs inventory up to Shopify.'},
+      {from:'shopify', to:'sap', type:'orders', curve:52, lnudge:46, label:'Orders',
+       tip:'Orders still flow from Shopify into SAP for fulfilment and invoicing.'},
+      {from:'customer', to:'shopify', type:'shop', two:true, curve:0, lnudge:-24, label:'Browse & buy',
+       tip:'Shoppers browse the catalog and place orders on the Shopify store.'}
+    ]
+  }
+};
+
+/* ---------- render nodes ---------- */
+const stage = document.getElementById('stage');
+const nodeEls = {};
+for(const [id,n] of Object.entries(NODES)){
+  const el = document.createElement('div');
+  el.className = 'node' + (n.big?' big':'');
+  el.style.left = n.x+'px'; el.style.top = n.y+'px'; el.style.width = n.w+'px';
+  el.innerHTML =
+    `<div class="badge"></div>`+
+    `<div class="ic" style="background:${n.color}">${n.ic}</div>`+
+    `<div class="tx"><div class="nm">${n.name}</div><div class="rl">${n.role}</div></div>`;
+  el.dataset.tipTitle = n.name;
+  el.dataset.tip = n.tip;
+  el.dataset.hex = getComputedStyle(document.documentElement).getPropertyValue(n.color.replace('var(','').replace(')','')).trim() || '#1C2430';
+  el.style.setProperty('--nc', n.color);
+  stage.appendChild(el);
+  nodeEls[id] = el;
+}
+
+/* ---------- svg helpers ---------- */
+const SVG='http://www.w3.org/2000/svg';
+const defs=document.getElementById('defs');
+const pathsG=document.getElementById('paths');
+for(const [k,f] of Object.entries(FLOW)){
+  const m=document.createElementNS(SVG,'marker');
+  m.setAttribute('id','arrow-'+k); m.setAttribute('viewBox','0 0 10 10');
+  m.setAttribute('refX','8'); m.setAttribute('refY','5'); m.setAttribute('markerWidth','7');
+  m.setAttribute('markerHeight','7'); m.setAttribute('orient','auto-start-reverse');
+  const p=document.createElementNS(SVG,'path');
+  p.setAttribute('d','M0 1 L9 5 L0 9 z'); p.setAttribute('fill',f.hex);
+  m.appendChild(p); defs.appendChild(m);
+}
+
+function edgePoint(n, tx, ty){
+  const cx=n.x, cy=n.y, hw=n.w/2+4, hh=n.h/2+4;
+  let dx=tx-cx, dy=ty-cy;
+  if(dx===0&&dy===0) return {x:cx,y:cy};
+  const t=Math.min(hw/Math.abs(dx||1e-6), hh/Math.abs(dy||1e-6));
+  return {x:cx+dx*t, y:cy+dy*t};
+}
+
+const REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function addBead(pathData, hex, dur, begin){
+  const c=document.createElementNS(SVG,'circle');
+  c.setAttribute('r','4'); c.setAttribute('fill',hex);
+  c.setAttribute('stroke','#fff'); c.setAttribute('stroke-width','1.4');
+  c.setAttribute('class','fdot');
+  const am=document.createElementNS(SVG,'animateMotion');
+  am.setAttribute('dur',dur+'s'); am.setAttribute('repeatCount','indefinite');
+  am.setAttribute('path',pathData); am.setAttribute('begin',begin+'s');
+  am.setAttribute('calcMode','linear');
+  c.appendChild(am); pathsG.appendChild(c);
+}
+
+function renderScenario(key){
+  const sc=SCENARIOS[key];
+  document.getElementById('scenario-name').textContent=sc.name;
+  document.getElementById('scenario-desc').textContent=sc.desc;
+
+  // node states
+  for(const id in nodeEls){
+    const el=nodeEls[id];
+    const active=sc.active.includes(id);
+    const dimmed=(sc.dim||[]).includes(id);
+    el.style.display = active? 'flex':'none';
+    el.classList.toggle('dim', dimmed);
+    const b=el.querySelector('.badge');
+    const bd=(sc.badges||{})[id];
+    if(bd && bd.t){ b.textContent=bd.t; b.className='badge show '+(bd.c||''); }
+    else { b.className='badge'; b.textContent=''; }
+  }
+
+  // clear flows
+  pathsG.innerHTML='';
+  document.querySelectorAll('.flabel').forEach(e=>e.remove());
+
+  sc.flows.forEach(fl=>{
+    const A=NODES[fl.from], B=NODES[fl.to], F=FLOW[fl.type];
+    const a=edgePoint(A,B.x,B.y), b=edgePoint(B,A.x,A.y);
+    // control point: perpendicular offset at midpoint
+    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+    const dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
+    const nx=-dy/len, ny=dx/len;
+    const cxp=mx+nx*fl.curve, cyp=my+ny*fl.curve;
+
+    const pd=`M ${a.x} ${a.y} Q ${cxp} ${cyp} ${b.x} ${b.y}`;
+    const path=document.createElementNS(SVG,'path');
+    path.setAttribute('d',pd);
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke',F.hex);
+    path.setAttribute('stroke-width','3');
+    path.setAttribute('stroke-linecap','round');
+    path.setAttribute('stroke-opacity', fl.dash? '0.9':'0.42');
+    if(fl.dash) path.setAttribute('stroke-dasharray','2 9'), path.setAttribute('stroke-width','3.2');
+    path.setAttribute('marker-end','url(#arrow-'+fl.type+')');
+    if(fl.two) path.setAttribute('marker-start','url(#arrow-'+fl.type+')');
+    path.style.opacity='0'; pathsG.appendChild(path);
+    requestAnimationFrame(()=>{ path.style.transition='opacity .4s ease'; path.style.opacity='1'; });
+
+    // traveling beads in the direction of flow
+    if(!REDUCE){
+      const dist=Math.hypot(b.x-a.x,b.y-a.y);
+      const dur=Math.max(2.6, Math.min(5.2, dist/95));
+      const rev=`M ${b.x} ${b.y} Q ${cxp} ${cyp} ${a.x} ${a.y}`;
+      const beads=2;
+      for(let i=0;i<beads;i++){
+        addBead(pd, F.hex, dur, -(dur/beads)*i);
+        if(fl.two) addBead(rev, F.hex, dur, -(dur/beads)*i - dur/(beads*2));
+      }
+    }
+
+    // label at quadratic midpoint t=.5, nudged off the line
+    let lx=0.25*a.x+0.5*cxp+0.25*b.x, ly=0.25*a.y+0.5*cyp+0.25*b.y;
+    const nud=fl.lnudge||0;
+    lx+=nx*nud; ly+=ny*nud;
+    const lab=document.createElement('div');
+    lab.className='flabel';
+    lab.style.left=lx+'px'; lab.style.top=ly+'px';
+    lab.innerHTML=`<span class="swatch" style="background:${F.hex}"></span>${fl.label}`;
+    lab.dataset.tipTitle=F.label;
+    lab.dataset.tip=fl.tip;
+    lab.dataset.hex=F.hex;
+    stage.appendChild(lab);
+  });
+}
+
+/* ---------- legend ---------- */
+const lf=document.getElementById('legend-flows');
+for(const [k,f] of Object.entries(FLOW)){
+  const d=document.createElement('div'); d.className='leg';
+  d.innerHTML=`<span class="ln" style="border-color:${f.hex}"></span> ${f.label}`;
+  lf.appendChild(d);
+}
+
+/* ---------- tooltip ---------- */
+const tip=document.getElementById('tip');
+function showTip(e){
+  const t=e.currentTarget;
+  const title=t.dataset.tipTitle, body=t.dataset.tip, hex=t.dataset.hex||'#8A97A8';
+  if(!body) return;
+  tip.innerHTML=`<div class="th"><span class="sw" style="background:${hex}"></span>${title}</div>${body}`;
+  tip.classList.add('show'); moveTip(e);
+}
+function moveTip(e){
+  const pad=16, w=tip.offsetWidth, h=tip.offsetHeight;
+  let x=e.clientX+pad, y=e.clientY+pad;
+  if(x+w>innerWidth-8) x=e.clientX-w-pad;
+  if(y+h>innerHeight-8) y=e.clientY-h-pad;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+function hideTip(){ tip.classList.remove('show'); }
+document.addEventListener('mouseover',e=>{ const t=e.target.closest('[data-tip]'); });
+function bindTips(){
+  document.querySelectorAll('[data-tip]').forEach(el=>{
+    el.addEventListener('mouseenter',showTip);
+    el.addEventListener('mousemove',moveTip);
+    el.addEventListener('mouseleave',hideTip);
+  });
+}
+
+/* ---------- toggle ---------- */
+const bC=document.getElementById('btn-connected'), bM=document.getElementById('btn-migrated');
+function setScenario(key){
+  bC.setAttribute('aria-pressed', key==='connected');
+  bM.setAttribute('aria-pressed', key==='migrated');
+  renderScenario(key);
+  bindTips();
+}
+bC.addEventListener('click',()=>setScenario('connected'));
+bM.addEventListener('click',()=>setScenario('migrated'));
+
+/* ---------- scale to fit ---------- */
+const wrap=document.getElementById('stageWrap');
+function fit(){
+  const avail=wrap.clientWidth;
+  const scale=Math.min(1, avail/1140);
+  stage.style.transform='scale('+scale+')';
+  wrap.style.height=(600*scale)+'px';
+}
+new ResizeObserver(fit).observe(wrap);
+
+/* init */
+setScenario('connected');
+bindTips();
+fit();
+</script>
