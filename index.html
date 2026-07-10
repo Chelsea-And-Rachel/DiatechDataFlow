@@ -1,11 +1,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product & Data Flow — Shopify Architecture</title>
+<title>Diotech — Product & Data Flow</title>
 <style>
   :root{
     --bg:#F4F6F9; --panel:#FFFFFF; --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE;
     --accent:#E0912F;              /* Sunny Road amber */
-    --shopify:#4C8B2B; --sap:#0A6ED1; --pim:#6D4FB0; --odoo:#8A4E76; --net32:#C6602E; --customer:#455066;
+    --shopify:#4C8B2B; --sap:#0A6ED1; --pim:#6D4FB0; --odoo:#8A4E76; --net32:#C6602E; --customer:#455066; --appse:#37517E;
     --flow-content:#6D5AE6; --flow-inventory:#E0912F; --flow-orders:#D6336C; --flow-sync:#0F9E8E; --flow-shop:#8A97A8;
   }
   *{box-sizing:border-box}
@@ -52,8 +52,8 @@
     background-size:26px 26px; background-position:13px 13px; opacity:.55;
     -webkit-mask-image:radial-gradient(130% 105% at 50% 42%, #000 52%, transparent 100%);
     mask-image:radial-gradient(130% 105% at 50% 42%, #000 52%, transparent 100%);}
-  .stage{position:relative; width:1140px; height:600px; transform-origin:top left; z-index:1}
-  #svg{position:absolute; inset:0; width:1140px; height:600px; overflow:visible}
+  .stage{position:relative; width:1140px; height:720px; transform-origin:top left; z-index:1}
+  #svg{position:absolute; inset:0; width:1140px; height:720px; overflow:visible}
   .node .ic svg{display:block}
   .fdot{filter:drop-shadow(0 0 3px rgba(255,255,255,.9))}
 
@@ -89,6 +89,8 @@
   }
   .flabel:hover{transform:translate(-50%,-50%) scale(1.05)}
   .flabel .swatch{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .flabel.wrap{white-space:normal; max-width:150px; line-height:1.32; text-align:left; align-items:flex-start}
+  .flabel.wrap .swatch{margin-top:4px}
 
   /* legend */
   .legend{margin-top:26px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 20px}
@@ -113,18 +115,18 @@
 </style>
 
 <div class="wrap">
-  <p class="eyebrow">Sunny Road · Ecommerce Architecture</p>
+  <p class="eyebrow">Diotech · Ecommerce Data Flow</p>
   <h1>How product data, inventory & orders flow</h1>
 
   <div class="toggle" role="group" aria-label="Choose a scenario">
-    <button id="btn-connected" aria-pressed="true"><span class="dot"></span>Option 1 — Keep the PIM (connected)</button>
-    <button id="btn-migrated" aria-pressed="false"><span class="dot"></span>Option 2 — Everything in Shopify (migrated)</button>
+    <button id="btn-migrated" aria-pressed="true"><span class="dot"></span>Scenario 1 — PIM not connected</button>
+    <button id="btn-connected" aria-pressed="false"><span class="dot"></span>Scenario 2 — PIM integrated with Net32 / others</button>
   </div>
-  <p class="hint">Currently showing: <b id="scenario-name">Keep the PIM</b> — <span id="scenario-desc">product content is managed in the PIM and synced into Shopify.</span> <span class="hoverhint">✦ hover any box or line for details</span></p>
+  <p class="hint">Currently showing: <b id="scenario-name">Scenario 1 — PIM not connected</b> — <span id="scenario-desc"></span> <span class="hoverhint">✦ hover any box or line for details</span></p>
 
   <div class="stage-wrap" id="stageWrap">
     <div class="stage" id="stage">
-      <svg id="svg" viewBox="0 0 1140 600" aria-hidden="true">
+      <svg id="svg" viewBox="0 0 1140 720" aria-hidden="true">
         <defs id="defs"></defs>
         <g id="paths"></g>
       </svg>
@@ -139,7 +141,7 @@
       <div class="leg"><span class="ln" style="border-color:#9AA6B6"></span> Ongoing sync (kept up to date automatically)</div>
       <div class="leg"><span class="ln dashed" style="border-color:#9AA6B6"></span> One-time migration (moved once, then done)</div>
     </div>
-    <p class="caption"><b>Note:</b> This is a proposed flow for discussion. <b>Pricing is managed in Shopify.</b> A few details are still being confirmed — for example, whether products not yet in the PIM are covered at launch. Hover any box or line for more.</p>
+    <p class="caption"><b>Note:</b> This is a proposed flow for discussion. <b>Pricing is managed in Shopify.</b> A few details are still being confirmed — for example, whether products not yet in the PIM are covered at launch. Sync directions shown follow APPSeCONNECT’s standard SAP–Shopify template. Hover any box or line for more.</p>
   </div>
 </div>
 
@@ -153,7 +155,8 @@ const IC = {
   pim:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg>',
   odoo:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l2-2h5l2 2h7a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z"/></svg>',
   net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
-  customer:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+  customer:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  appse:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13M13 5l4 4-4 4"/><path d="M20 15H7M11 19l-4-4 4-4"/></svg>'
 };
 
 /* ---------- nodes ---------- */
@@ -164,29 +167,54 @@ const NODES = {
             tip:'Where a lot of the current product data lives today. Its data is brought into the setup as part of the move to Shopify.'},
   pim:     {x:430, y:290, w:186,h:82, name:'PIM', role:'Product content hub', color:'var(--pim)', ic:IC.pim,
             tip:'The Product Information Management system. It owns rich product content — titles, descriptions, images, specs and attributes — and keeps it clean and consistent for every channel.'},
-  shopify: {x:745, y:210, w:224,h:118,name:'Shopify', role:'Your online store', color:'var(--shopify)', ic:IC.shopify, big:true,
+  shopify: {x:745, y:200, w:224,h:116,name:'Shopify', role:'Your online store', color:'var(--shopify)', ic:IC.shopify, big:true,
             tip:'The storefront customers actually see and buy from. Pricing is managed here. Depending on the option chosen, it either pulls product content from the PIM, or holds all of it directly.'},
-  customer:{x:1010,y:210, w:150,h:78, name:'Customer', role:'Shops & orders', color:'var(--customer)', ic:IC.customer,
+  customer:{x:1015,y:150, w:150,h:78, name:'Customer', role:'Shops & orders', color:'var(--customer)', ic:IC.customer,
             tip:'The shopper. They browse the catalog and place orders on the Shopify store.'},
-  sap:     {x:745, y:475, w:200,h:92, name:'SAP', role:'ERP — the back office', color:'var(--sap)', ic:IC.sap,
-            tip:'The ERP that runs the business: fulfilment, invoicing and stock. It owns inventory levels and receives every order. Pricing is managed in Shopify, not here.'}
+  appse:   {x:745, y:445, w:210,h:68, name:'APPSeCONNECT', role:'SAP \u21C4 Shopify connector', color:'var(--appse)', ic:IC.appse,
+            tip:'The integration platform (iPaaS) that links SAP and Shopify. From SAP up to Shopify it syncs inventory/stock, customer records, invoices and shipment tracking; from Shopify down to SAP it sends each new order as a sales order. Everything stays aligned automatically in near real time, with no manual re-keying.'},
+  sap:     {x:895, y:642, w:200,h:92, name:'SAP', role:'ERP — the back office', color:'var(--sap)', ic:IC.sap,
+            tip:'The ERP that runs the business: fulfilment, invoicing and stock. It owns inventory levels and receives every order (through APPSeCONNECT). Pricing is managed in Shopify, not here.'}
 };
 
 /* ---------- flow types ---------- */
 const FLOW = {
   content:  {color:'var(--flow-content)',  hex:'#6D5AE6', label:'Product information'},
-  inventory:{color:'var(--flow-inventory)',hex:'#E0912F', label:'Inventory levels'},
-  orders:   {color:'var(--flow-orders)',   hex:'#D6336C', label:'Orders'},
+  inventory:{color:'var(--flow-inventory)',hex:'#E0912F', label:'SAP → Shopify sync'},
+  orders:   {color:'var(--flow-orders)',   hex:'#D6336C', label:'Shopify → SAP sync'},
   sync:     {color:'var(--flow-sync)',     hex:'#0F9E8E', label:'Marketplace sync'},
   shop:     {color:'var(--flow-shop)',     hex:'#8A97A8', label:'Browse & buy'}
 };
 
 /* ---------- scenarios ---------- */
 const SCENARIOS = {
+  migrated:{
+    name:'Scenario 1 — PIM not connected',
+    desc:'the PIM isn\u2019t linked to other platforms, so product data is migrated once into Shopify and Shopify manages it directly. SAP still owns inventory and receives orders through APPSeCONNECT; pricing lives in Shopify.',
+    active:['odoo','pim','shopify','customer','sap','appse'],
+    dim:['net32','pim','odoo'],
+    badges:{shopify:{t:'Product info lives here', c:'good'}, pim:{t:'Retired after migration', c:'warn'}, net32:{t:'Not connected', c:'warn'}, odoo:{t:'Migrated once', c:''}},
+    flows:[
+      {from:'odoo', to:'shopify', type:'content', dash:true, curve:-30, lnudge:28, label:'One-time migration',
+       tip:'All product data is migrated once from Odoo directly into Shopify.'},
+      {from:'pim', to:'shopify', type:'content', dash:true, curve:-20, lnudge:-26, label:'One-time migration',
+       tip:'Any product content in the PIM is migrated once into Shopify. After that the PIM is no longer needed.'},
+      {from:'sap', to:'appse', type:'inventory', curve:-32, lnudge:-92, lwrap:true, label:'Inventory, customers, invoices, shipping',
+       tip:'Flowing UP from SAP into Shopify through APPSeCONNECT: inventory / stock levels, customer records, invoices (payment status) and shipment tracking — so the store always shows accurate stock and up-to-date order status.'},
+      {from:'appse', to:'shopify', type:'inventory', curve:-32, label:'',
+       tip:'APPSeCONNECT carries SAP updates — stock, customers, invoices and shipment tracking — up into Shopify.'},
+      {from:'shopify', to:'appse', type:'orders', curve:-32, lnudge:-72, label:'Orders',
+       tip:'Flowing DOWN from Shopify into SAP through APPSeCONNECT: each new Shopify order, created in SAP as a sales order for fulfilment and invoicing.'},
+      {from:'appse', to:'sap', type:'orders', curve:-32, label:'',
+       tip:'APPSeCONNECT creates the matching sales order in SAP for fulfilment and invoicing.'},
+      {from:'customer', to:'shopify', type:'shop', two:true, curve:0, lnudge:-24, label:'Browse & buy',
+       tip:'Shoppers browse the catalog and place orders on the Shopify store.'}
+    ]
+  },
   connected:{
-    name:'Keep the PIM',
-    desc:'product content is managed in the PIM and synced live into Shopify; SAP still owns inventory and receives orders; pricing lives in Shopify.',
-    active:['net32','odoo','pim','shopify','customer','sap'],
+    name:'Scenario 2 — PIM integrated',
+    desc:'the PIM is integrated with Net32 (and possibly others), so it stays as the source of truth for product content and syncs live into Shopify. SAP still owns inventory and receives orders through APPSeCONNECT; pricing lives in Shopify.',
+    active:['net32','odoo','pim','shopify','customer','sap','appse'],
     badges:{shopify:''},
     flows:[
       {from:'net32', to:'pim', type:'sync', two:true, curve:24, lnudge:-24, label:'Marketplace sync',
@@ -195,29 +223,14 @@ const SCENARIOS = {
        tip:'Existing product data from Odoo is brought into the PIM so the PIM holds the complete, enriched catalog.'},
       {from:'pim', to:'shopify', type:'content', curve:-26, lnudge:-26, label:'Product information',
        tip:'The PIM is the single source of truth for product content and feeds titles, descriptions, images and attributes to the storefront.'},
-      {from:'sap', to:'shopify', type:'inventory', curve:52, lnudge:46, label:'Inventory',
-       tip:'SAP owns stock levels. Inventory syncs up to Shopify so the store shows accurate availability.'},
-      {from:'shopify', to:'sap', type:'orders', curve:52, lnudge:46, label:'Orders',
-       tip:'When a customer places an order it flows from Shopify into SAP for fulfilment and invoicing.'},
-      {from:'customer', to:'shopify', type:'shop', two:true, curve:0, lnudge:-24, label:'Browse & buy',
-       tip:'Shoppers browse the catalog and place orders on the Shopify store.'}
-    ]
-  },
-  migrated:{
-    name:'Everything in Shopify',
-    desc:'product data is migrated once and Shopify manages it directly; SAP still owns inventory and receives orders; pricing lives in Shopify.',
-    active:['odoo','pim','shopify','customer','sap'],
-    dim:['net32','pim','odoo'],
-    badges:{shopify:{t:'Product info lives here', c:'good'}, pim:{t:'Retired after migration', c:'warn'}, net32:{t:'Not connected', c:'warn'}, odoo:{t:'Migrated once', c:''}},
-    flows:[
-      {from:'odoo', to:'shopify', type:'content', dash:true, curve:-30, lnudge:28, label:'One-time migration',
-       tip:'All product data is migrated once from Odoo directly into Shopify.'},
-      {from:'pim', to:'shopify', type:'content', dash:true, curve:-20, lnudge:-26, label:'One-time migration',
-       tip:'Any product content in the PIM is migrated once into Shopify. After that the PIM is no longer needed.'},
-      {from:'sap', to:'shopify', type:'inventory', curve:52, lnudge:46, label:'Inventory',
-       tip:'SAP still owns stock levels and syncs inventory up to Shopify.'},
-      {from:'shopify', to:'sap', type:'orders', curve:52, lnudge:46, label:'Orders',
-       tip:'Orders still flow from Shopify into SAP for fulfilment and invoicing.'},
+      {from:'sap', to:'appse', type:'inventory', curve:-32, lnudge:-92, lwrap:true, label:'Inventory, customers, invoices, shipping',
+       tip:'Flowing UP from SAP into Shopify through APPSeCONNECT: inventory / stock levels, customer records, invoices (payment status) and shipment tracking — so the store always shows accurate stock and up-to-date order status.'},
+      {from:'appse', to:'shopify', type:'inventory', curve:-32, label:'',
+       tip:'APPSeCONNECT carries SAP updates — stock, customers, invoices and shipment tracking — up into Shopify.'},
+      {from:'shopify', to:'appse', type:'orders', curve:-32, lnudge:-72, label:'Orders',
+       tip:'Flowing DOWN from Shopify into SAP through APPSeCONNECT: each new Shopify order, created in SAP as a sales order for fulfilment and invoicing.'},
+      {from:'appse', to:'sap', type:'orders', curve:-32, label:'',
+       tip:'APPSeCONNECT creates the matching sales order in SAP for fulfilment and invoicing.'},
       {from:'customer', to:'shopify', type:'shop', two:true, curve:0, lnudge:-24, label:'Browse & buy',
        tip:'Shoppers browse the catalog and place orders on the Shopify store.'}
     ]
@@ -336,11 +349,12 @@ function renderScenario(key){
     }
 
     // label at quadratic midpoint t=.5, nudged off the line
+    if(!fl.label) return;
     let lx=0.25*a.x+0.5*cxp+0.25*b.x, ly=0.25*a.y+0.5*cyp+0.25*b.y;
     const nud=fl.lnudge||0;
     lx+=nx*nud; ly+=ny*nud;
     const lab=document.createElement('div');
-    lab.className='flabel';
+    lab.className='flabel'+(fl.lwrap?' wrap':'');
     lab.style.left=lx+'px'; lab.style.top=ly+'px';
     lab.innerHTML=`<span class="swatch" style="background:${F.hex}"></span>${fl.label}`;
     lab.dataset.tipTitle=F.label;
@@ -401,12 +415,12 @@ function fit(){
   const avail=wrap.clientWidth;
   const scale=Math.min(1, avail/1140);
   stage.style.transform='scale('+scale+')';
-  wrap.style.height=(600*scale)+'px';
+  wrap.style.height=(720*scale)+'px';
 }
 new ResizeObserver(fit).observe(wrap);
 
 /* init */
-setScenario('connected');
+setScenario('migrated');
 bindTips();
 fit();
 </script>
