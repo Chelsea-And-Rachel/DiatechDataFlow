@@ -5,7 +5,7 @@
   :root{
     --bg:#F4F6F9; --panel:#FFFFFF; --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE;
     --accent:#E0912F;              /* Sunny Road amber */
-    --shopify:#4C8B2B; --sap:#0A6ED1; --pim:#6D4FB0; --odoo:#8A4E76; --net32:#C6602E; --customer:#455066; --appse:#37517E; --commercium:#147A8C;
+    --shopify:#4C8B2B; --sap:#0A6ED1; --pim:#6D4FB0; --odoo:#8A4E76; --net32:#C6602E; --customer:#455066; --appse:#37517E; --connector:#147A8C;
     --flow-content:#6D5AE6; --flow-inventory:#E0912F; --flow-orders:#D6336C; --flow-sync:#0F9E8E; --flow-shop:#8A97A8;
   }
   *{box-sizing:border-box}
@@ -157,15 +157,15 @@ const IC = {
   net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
   customer:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
   appse:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13M13 5l4 4-4 4"/><path d="M20 15H7M11 19l-4-4 4-4"/></svg>',
-  commercium:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18A3.5 3.5 0 0 1 7 11.05 5 5 0 0 1 16.9 10 3.5 3.5 0 0 1 16.5 18H6.5z"/></svg>'
+  connector:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18A3.5 3.5 0 0 1 7 11.05 5 5 0 0 1 16.9 10 3.5 3.5 0 0 1 16.5 18H6.5z"/></svg>'
 };
 
 /* ---------- nodes ---------- */
 const NODES = {
   net32:   {x:150, y:105, w:174,h:74, name:'Net32', role:'Dental supply marketplace', color:'var(--net32)', ic:IC.net32,
-            tip:'A third-party dental marketplace where the products are also listed and sold. It connects to Shopify through the Commercium connector, so listings, stock and prices stay in step and Net32 orders flow back for fulfilment.'},
-  commercium:{x:450, y:110, w:206,h:68, name:'Commercium', role:'Net32 \u21C4 Shopify connector', color:'var(--commercium)', ic:IC.commercium,
-            tip:'Commercium (by ConstaCloud) is the connector that links Shopify with the Net32 dental marketplace. It pushes product listings, inventory and prices from Shopify to Net32, pulls Net32 orders and cancellations back into Shopify, and syncs tracking once orders ship \u2014 keeping the Net32 channel aligned with Shopify automatically.'},
+            tip:'A third-party dental marketplace where the products are also listed and sold. It connects to Shopify through an integration connector, so listings, stock and prices stay in step and Net32 orders flow back for fulfilment.'},
+  connector:{x:450, y:110, w:206,h:68, name:'Marketplace Connector', role:'Net32 \u21C4 Shopify sync', color:'var(--connector)', ic:IC.connector,
+            tip:'An integration connector that links Shopify with the Net32 dental marketplace. It pushes product listings, inventory and prices from Shopify to Net32, pulls Net32 orders and cancellations back into Shopify, and syncs tracking once orders ship \u2014 keeping the Net32 channel aligned with Shopify automatically.'},
   odoo:    {x:150, y:470, w:174,h:74, name:'Odoo', role:'Existing product data', color:'var(--odoo)', ic:IC.odoo,
             tip:'Where a lot of the current product data lives today. Its data is brought into the setup as part of the move to Shopify.'},
   pim:     {x:430, y:290, w:186,h:82, name:'PIM', role:'Product content hub', color:'var(--pim)', ic:IC.pim,
@@ -194,14 +194,14 @@ const SCENARIOS = {
   migrated:{
     name:'Scenario 1 — PIM not connected',
     desc:'the PIM isn\u2019t linked to other platforms, so product data is migrated once into Shopify and Shopify manages it directly. SAP still owns inventory and receives orders through APPSeCONNECT; pricing lives in Shopify.',
-    active:['net32','commercium','odoo','pim','shopify','customer','sap','appse'],
+    active:['net32','connector','odoo','pim','shopify','customer','sap','appse'],
     dim:['pim','odoo'],
     badges:{shopify:{t:'Product info lives here', c:'good'}, pim:{t:'Retired after migration', c:'warn'}, odoo:{t:'Migrated once', c:''}},
     flows:[
-      {from:'net32', to:'commercium', type:'sync', two:true, curve:-16, lnudge:-26, label:'Listings & orders',
-       tip:'Commercium keeps Net32 in step with Shopify: product listings, stock and prices are pushed from Shopify to Net32, and Net32 orders (and cancellations) flow back into Shopify.'},
-      {from:'commercium', to:'shopify', type:'sync', two:true, curve:-18, label:'',
-       tip:'The Commercium connector (by ConstaCloud) exchanges data between Shopify and the Net32 marketplace in near real time.'},
+      {from:'net32', to:'connector', type:'sync', two:true, curve:-16, lnudge:-26, label:'Listings & orders',
+       tip:'The connector keeps Net32 in step with Shopify: product listings, stock and prices are pushed from Shopify to Net32, and Net32 orders (and cancellations) flow back into Shopify.'},
+      {from:'connector', to:'shopify', type:'sync', two:true, curve:-18, label:'',
+       tip:'The connector exchanges data between Shopify and the Net32 marketplace in near real time.'},
       {from:'odoo', to:'shopify', type:'content', dash:true, curve:-30, lnudge:28, label:'One-time migration',
        tip:'All product data is migrated once from Odoo directly into Shopify.'},
       {from:'pim', to:'shopify', type:'content', dash:true, curve:-20, lnudge:-26, label:'One-time migration',
@@ -221,13 +221,13 @@ const SCENARIOS = {
   connected:{
     name:'Scenario 2 — PIM integrated',
     desc:'the PIM is integrated with Net32 (and possibly others), so it stays as the source of truth for product content and syncs live into Shopify. SAP still owns inventory and receives orders through APPSeCONNECT; pricing lives in Shopify.',
-    active:['net32','commercium','odoo','pim','shopify','customer','sap','appse'],
+    active:['net32','connector','odoo','pim','shopify','customer','sap','appse'],
     badges:{shopify:''},
     flows:[
-      {from:'net32', to:'commercium', type:'sync', two:true, curve:-16, lnudge:-26, label:'Listings & orders',
-       tip:'Commercium keeps Net32 in step with Shopify: product listings, stock and prices are pushed from Shopify to Net32, and Net32 orders (and cancellations) flow back into Shopify.'},
-      {from:'commercium', to:'shopify', type:'sync', two:true, curve:-18, label:'',
-       tip:'The Commercium connector (by ConstaCloud) exchanges data between Shopify and the Net32 marketplace in near real time.'},
+      {from:'net32', to:'connector', type:'sync', two:true, curve:-16, lnudge:-26, label:'Listings & orders',
+       tip:'The connector keeps Net32 in step with Shopify: product listings, stock and prices are pushed from Shopify to Net32, and Net32 orders (and cancellations) flow back into Shopify.'},
+      {from:'connector', to:'shopify', type:'sync', two:true, curve:-18, label:'',
+       tip:'The connector exchanges data between Shopify and the Net32 marketplace in near real time.'},
       {from:'odoo', to:'pim', type:'content', dash:true, curve:-24, lnudge:26, label:'Loaded in',
        tip:'Existing product data from Odoo is brought into the PIM so the PIM holds the complete, enriched catalog.'},
       {from:'pim', to:'shopify', type:'content', curve:-26, lnudge:-26, label:'Product information',
