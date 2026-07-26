@@ -98,6 +98,31 @@
 </style>
 
 <div class="wrap">
+  <!-- ===== flow nav — paste once, right after <div class="wrap"> ===== -->
+<style>
+  .flownav{display:inline-flex;gap:4px;background:#EDF0F5;border:1px solid #E1E6EE;border-radius:999px;
+    padding:4px;margin:0 0 18px;box-shadow:0 1px 3px rgba(20,30,50,.06);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;flex-wrap:wrap}
+  .flownav a{text-decoration:none;font-weight:600;font-size:13px;color:#5A6472;padding:8px 15px;
+    border-radius:999px;transition:all .15s ease;white-space:nowrap}
+  .flownav a:hover{color:#1C2430}
+  .flownav a.active{background:#fff;color:#1C2430;box-shadow:0 1px 3px rgba(20,30,50,.14)}
+</style>
+<nav class="flownav" id="flownav">
+  <a href="index.html" data-f="index.html">Data Flow</a>
+  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Proposed Architecture</a>
+  <a href="client-approach.html" data-f="client-approach.html">Client-Requested</a>
+</nav>
+<script>
+  (function(){
+    var f = location.pathname.split('/').pop();
+    if(!f) f = 'index.html';
+    document.querySelectorAll('#flownav a').forEach(function(a){
+      if(a.getAttribute('data-f') === f) a.classList.add('active');
+    });
+  })();
+</script>
+<!-- ===== end flow nav ===== -->
   <p class="eyebrow">Diatech · Proposed Architecture</p>
   <h1>How orders and inventory flow across every channel</h1>
   <p class="cap">Every sales channel connects <b>directly to SAP</b> through its own connector. <b>SAP stays the single source of truth</b> — all orders land in SAP for fulfilment, and one live inventory number flows back out to every channel.</p>
