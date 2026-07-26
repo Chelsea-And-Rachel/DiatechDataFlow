@@ -1,0 +1,229 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client-Requested Approach — Diatech</title>
+<style>
+  :root{
+    --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
+    --net32:#C6602E; --dentera:#6D4FB0; --other:#566270; --shopify:#4C8B2B;
+    --sap:#0A6ED1; --orders:#4C63D8; --inv:#0F9E8E;
+    --warn:#C77D2E; --warnbg:#FBF1E3; --warnbd:#EAD5B5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 520px at 50% -10%, #FBF3E8 0%, rgba(251,243,232,0) 60%),
+      linear-gradient(180deg,#EEF1F7 0%, #E7EBF2 100%);
+    background-attachment:fixed; color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{max-width:1160px; margin:0 auto; padding:26px 22px 44px}
+  .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#B0712A; font-weight:700; margin:0 0 6px}
+  h1{font-size:25px; font-weight:750; letter-spacing:-.01em; margin:0 0 4px}
+  .sub{font-size:14px;font-weight:650;font-style:italic;color:var(--warn);margin:0 0 8px}
+  .cap{color:#454C58; font-size:14.5px; margin:0 0 4px; max-width:940px}
+  .cap b{color:var(--ink); font-weight:650}
+  .hint{font-size:12.5px;color:var(--muted);margin:8px 0 14px}
+  .hoverhint{display:inline-block; padding:2px 10px; border-radius:999px; background:rgba(199,125,46,.13); color:#9A6420; font-weight:600; font-size:11.5px}
+
+  .stage-wrap{position:relative; overflow:hidden; margin:0 auto; border-radius:22px;
+    background:
+      radial-gradient(560px 320px at 50% 62%, rgba(199,125,46,.12), rgba(199,125,46,0) 70%),
+      radial-gradient(360px 260px at 12% 10%, rgba(198,96,46,.08), rgba(198,96,46,0) 72%),
+      linear-gradient(160deg,#FBFCFE 0%, #F1F1F4 100%);
+    border:1px solid rgba(28,36,48,.09);
+    box-shadow:0 26px 60px -30px rgba(23,33,52,.42), inset 0 1px 0 rgba(255,255,255,.7);}
+  .stage-wrap::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(28,42,64,.10) 1.1px, transparent 1.3px);
+    background-size:26px 26px; background-position:13px 13px; opacity:.5;
+    -webkit-mask-image:radial-gradient(130% 110% at 50% 45%, #000 55%, transparent 100%);
+    mask-image:radial-gradient(130% 110% at 50% 45%, #000 55%, transparent 100%);}
+  .stage{position:relative; width:1200px; height:790px; transform-origin:top left; z-index:1}
+  #svg{position:absolute; inset:0; width:1200px; height:790px; overflow:visible}
+  .node .ic svg{display:block}
+
+  .node{position:absolute; transform:translate(-50%,-50%); background:var(--panel);
+    border:1px solid var(--line); border-radius:15px; padding:13px 16px;
+    box-shadow:0 8px 20px rgba(23,33,52,.08); transition:transform .18s ease, box-shadow .18s ease;
+    display:flex; gap:12px; align-items:center; cursor:default;}
+  .node:hover{transform:translate(-50%,-50%) translateY(-3px); box-shadow:0 16px 32px rgba(23,33,52,.16), 0 0 0 2px var(--nc,var(--line))}
+  .node .ic{width:40px;height:40px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;color:#fff}
+  .node .nm{font-weight:750;font-size:16px;letter-spacing:-.01em;line-height:1.15}
+  .node .rl{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.25;max-width:230px}
+  .node .stock{margin-top:7px;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;width:max-content;background:#F1F5F9;border:1px solid #E2E8F0;color:#334155}
+  .node .stock i{width:7px;height:7px;border-radius:50%;font-style:normal}
+  .node .stock.lag{background:var(--warnbg);border-color:var(--warnbd);color:#9A6420}
+  .node .stock.lag i{background:var(--warn)}
+  .node .stock.tru{background:#EAF6EE;border-color:#CBE8D5;color:#1B7A3D}
+  .node .stock.tru i{background:#16A34A}
+
+  .node.flag{border:2px dashed var(--warn); box-shadow:0 10px 26px rgba(199,125,46,.22)}
+  .node.flag:hover{box-shadow:0 16px 34px rgba(199,125,46,.28), 0 0 0 2px var(--warn)}
+  .node .bang{position:absolute;top:-11px;right:-11px;width:27px;height:27px;border-radius:50%;background:var(--warn);color:#fff;font-weight:800;font-size:16px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.22)}
+
+  .sap{position:absolute; transform:translate(-50%,-50%); border-radius:20px; color:#fff; cursor:default;
+    background:linear-gradient(135deg,#0A6ED1,#0A56A6); box-shadow:0 18px 40px -12px rgba(10,86,166,.55);
+    padding:18px 26px; display:flex; flex-direction:column; gap:12px; transition:transform .18s ease, box-shadow .18s ease;}
+  .sap:hover{transform:translate(-50%,-50%) translateY(-3px); box-shadow:0 24px 50px -12px rgba(10,86,166,.6)}
+  .sap .top{display:flex; align-items:center; gap:14px}
+  .sap .ic{width:52px;height:52px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,255,255,.16)}
+  .sap .nm{font-size:26px;font-weight:750;letter-spacing:-.01em;line-height:1}
+  .sap .rl{font-size:13px;opacity:.9;margin-top:4px}
+  .sap .stock{margin-left:auto;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .sap .chips{display:flex;gap:10px}
+  .sap .chips div{flex:1;background:rgba(255,255,255,.14);border-radius:10px;padding:8px 6px;font-size:12px;font-weight:650;text-align:center}
+
+  .ftag{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid var(--line);
+    border-radius:999px; padding:4px 11px; font-size:11.5px; font-weight:700; box-shadow:0 3px 9px rgba(23,33,52,.09);
+    display:flex; align-items:center; gap:6px; white-space:nowrap; z-index:3;}
+  .ftag i{width:8px;height:8px;border-radius:50%;font-style:normal}
+  .ftag.warn{background:var(--warnbg);border-color:var(--warnbd);color:#8A5A1E}
+
+  .watch{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid #EEE0CC; border-left:4px solid var(--warn);
+    border-radius:11px; padding:11px 13px; box-shadow:0 8px 20px rgba(23,33,52,.09); display:flex; gap:10px; align-items:flex-start;}
+  .watch .b{width:20px;height:20px;flex:0 0 auto;border-radius:6px;background:var(--warn);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
+  .watch .wt b{color:var(--ink)}
+  .watch .wt{font-size:11.5px;color:#4A5260;line-height:1.4}
+
+  .fdot{filter:drop-shadow(0 0 3px rgba(255,255,255,.9))}
+  #tip{position:fixed; z-index:50; max-width:300px; background:#1C2430; color:#F4F6F9; border-radius:11px;
+    padding:11px 13px; font-size:12.8px; line-height:1.5; box-shadow:0 10px 30px rgba(10,15,30,.28);
+    opacity:0; transform:translateY(4px); transition:opacity .13s ease, transform .13s ease; pointer-events:none;}
+  #tip.show{opacity:1; transform:translateY(0)}
+  #tip .th{font-weight:700;font-size:13px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  #tip .th .sw{width:9px;height:9px;border-radius:50%}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Diatech · Client-Requested Approach</p>
+  <h1>Routing every channel through Shopify</h1>
+  <p class="sub">Why this adds risk</p>
+  <p class="cap">In this version, Net32, Dentera and other platforms all route <b>through Shopify</b> to reach SAP. Every order and every inventory update takes <b>an extra hop</b> — and Shopify becomes a relay for orders it wasn't built to handle.</p>
+  <p class="hint"><span class="hoverhint">✦ hover any box or ⚠ for detail</span></p>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" viewBox="0 0 1200 790"><defs id="defs"></defs><g id="paths"></g></svg>
+    </div>
+  </div>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const IC={
+  net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+  dentera:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/></svg>',
+  other:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  shopify:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+  sap:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>'
+};
+const CH={
+  net32:{x:300,y:130,w:250,h:92,name:'Net32',role:'Dental-supply marketplace — customers',color:'var(--net32)',ic:IC.net32,stock:'SKU-123 · 100 · lagging',lag:1,
+    tip:'Customers order here. But Net32 doesn\u2019t list or check out on Shopify \u2014 so pushing its orders through Shopify is a forced data pass-through, not a real integration.'},
+  dentera:{x:600,y:130,w:250,h:92,name:'Dentera',role:'GPO platform (with DSOs) — customers',color:'var(--dentera)',ic:IC.dentera,stock:'SKU-123 · 100 · lagging',lag:1,
+    tip:'A GPO platform (its DSOs order through it). Its GPO/contract terms have no native equivalent in Shopify\u2019s order model.'},
+  other:{x:900,y:130,w:250,h:92,name:'Other Platforms',role:'More channels — customers',color:'var(--other)',ic:IC.other,stock:'SKU-123 · 100 · lagging',lag:1,
+    tip:'Additional platforms, each still needing its own connector \u2014 routed through Shopify rather than straight to SAP.'}
+};
+const SHOP={x:600,y:352,w:340,h:120,
+  tip:'In the client\u2019s approach Shopify becomes the middle layer for every channel. But it was built as a DTC storefront \u2014 it has no native concept of B2B contract pricing, GPO terms or PO-style orders, and every order and inventory update now passes through it, adding a hop and mixing B2B volume into storefront analytics.'};
+const SAP={x:600,y:560,w:940,h:132,
+  tip:'The true single source of truth: real stock here is 90. Because updates must travel back out through Shopify before reaching the channels, the channels keep showing 100 until the relay catches up \u2014 the overselling window.'};
+
+const stage=document.getElementById('stage'), SVG='http://www.w3.org/2000/svg';
+const defs=document.getElementById('defs'), pathsG=document.getElementById('paths');
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const varHex=v=>getComputedStyle(document.documentElement).getPropertyValue(v.replace('var(','').replace(')','')).trim();
+
+const MK={orders:varHex('var(--orders)'), inv:varHex('var(--inv)')};
+for(const [k,hex] of Object.entries(MK)){
+  const m=document.createElementNS(SVG,'marker');
+  m.setAttribute('id','ar-'+k);m.setAttribute('viewBox','0 0 10 10');m.setAttribute('refX','8');m.setAttribute('refY','5');
+  m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');m.setAttribute('orient','auto-start-reverse');
+  const p=document.createElementNS(SVG,'path');p.setAttribute('d','M0 1 L9 5 L0 9 z');p.setAttribute('fill',hex);
+  m.appendChild(p);defs.appendChild(m);
+}
+function chNode(id,n,flag){
+  const el=document.createElement('div');el.className='node'+(flag?' flag':'');
+  el.style.left=n.x+'px';el.style.top=n.y+'px';el.style.width=n.w+'px';el.style.setProperty('--nc',n.color);
+  const stockCls = n.lag?'stock lag':(n.tru?'stock tru':'stock');
+  el.innerHTML=(flag?'<div class="bang">!</div>':'')+
+    '<div class="ic" style="background:'+n.color+'">'+n.ic+'</div>'+
+    '<div><div class="nm">'+n.name+'</div><div class="rl">'+n.role+'</div>'+
+    (n.stock?'<div class="'+stockCls+'"><i></i>'+n.stock+'</div>':'')+'</div>';
+  el.dataset.tipTitle=n.name;el.dataset.tip=n.tip;el.dataset.hex=varHex(n.color);
+  stage.appendChild(el);return el;
+}
+for(const [id,n] of Object.entries(CH)) chNode(id,n,false);
+chNode('shopify',{...SHOP,name:'Shopify',role:'DTC storefront — now relaying B2B & marketplace orders it wasn\u2019t built for',color:'var(--shopify)',ic:IC.shopify,stock:'SKU-123 · 100 · lagging',lag:1},true);
+
+const sapEl=document.createElement('div');sapEl.className='sap';
+sapEl.style.left=SAP.x+'px';sapEl.style.top=SAP.y+'px';sapEl.style.width=SAP.w+'px';
+sapEl.innerHTML='<div class="top"><div class="ic">'+IC.sap+'</div>'+
+  '<div><div class="nm">SAP</div><div class="rl">ERP — the true single source of truth</div></div>'+
+  '<div class="stock">SKU-123 · 90 units (real)</div></div>'+
+  '<div class="chips"><div>Orders</div><div>Inventory</div><div>Fulfilment</div><div>Financials</div></div>';
+sapEl.dataset.tipTitle='SAP';sapEl.dataset.tip=SAP.tip;sapEl.dataset.hex=varHex('var(--sap)');
+stage.appendChild(sapEl);
+
+function rect(n){return {cx:n.x,cy:n.y,hw:n.w/2,hh:n.h/2};}
+function edge(n,tx,ty){const r=rect(n),dx=tx-r.cx,dy=ty-r.cy;if(!dx&&!dy)return{x:r.cx,y:r.cy};
+  const t=Math.min((r.hw+3)/Math.abs(dx||1e-6),(r.hh+3)/Math.abs(dy||1e-6));return{x:r.cx+dx*t,y:r.cy+dy*t};}
+function addBead(pd,hex,dur,begin){
+  const c=document.createElementNS(SVG,'circle');
+  c.setAttribute('r','4');c.setAttribute('fill',hex);c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','1.4');c.setAttribute('class','fdot');
+  const am=document.createElementNS(SVG,'animateMotion');am.setAttribute('dur',dur+'s');am.setAttribute('repeatCount','indefinite');
+  am.setAttribute('path',pd);am.setAttribute('begin',begin+'s');am.setAttribute('calcMode','linear');
+  c.appendChild(am);pathsG.appendChild(c);
+}
+function seg(aNode,bNode,color,dir,curve,width){
+  const a=edge(aNode,bNode.x,bNode.y), b=edge(bNode,aNode.x,aNode.y);
+  const from=dir==='down'?a:b, to=dir==='down'?b:a;
+  const mx=(from.x+to.x)/2,my=(from.y+to.y)/2,dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1;
+  const nx=-dy/len,ny=dx/len,cxp=mx+nx*curve,cyp=my+ny*curve;
+  const pd='M '+from.x+' '+from.y+' Q '+cxp+' '+cyp+' '+to.x+' '+to.y;
+  const hex=MK[color];
+  const path=document.createElementNS(SVG,'path');
+  path.setAttribute('d',pd);path.setAttribute('fill','none');path.setAttribute('stroke',hex);
+  path.setAttribute('stroke-width',(width||2.8));path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-opacity','.4');
+  if(color==='inv')path.setAttribute('stroke-dasharray','7 5');
+  path.setAttribute('marker-end','url(#ar-'+color+')');
+  pathsG.appendChild(path);
+  if(!REDUCE){const dist=Math.hypot(dx,dy),dur=Math.max(2.2,Math.min(4.6,dist/95));
+    for(let i=0;i<2;i++)addBead(pd,hex,dur,-(dur/2)*i);}
+}
+// hop 1: channels -> Shopify
+for(const id in CH){ seg(CH[id],SHOP,'orders','down',13); seg(CH[id],SHOP,'inv','up',13); }
+// hop 2: Shopify -> SAP (thicker to emphasise the funnel)
+seg(SHOP,SAP,'orders','down',16,3.4); seg(SHOP,SAP,'inv','up',16,3.4);
+
+function tag(x,y,text,hex,warn){const d=document.createElement('div');d.className='ftag'+(warn?' warn':'');d.style.left=x+'px';d.style.top=y+'px';
+  d.innerHTML=(hex?'<i style="background:'+hex+'"></i>':'')+text;stage.appendChild(d);}
+tag(372,250,'Orders \u2193',MK.orders);
+tag(372,284,'Inventory \u2191',MK.inv);
+tag(430,470,'\u26A0 Hop 1 + Hop 2 \u2014 two hops instead of one',null,true);
+
+// watch-outs
+const WATCH=[
+  {x:270,y:712,w:330,n:'1',t:'<b>Extra hop.</b> Every order &amp; inventory update passes through Shopify \u2014 added latency and a wider overselling window.'},
+  {x:600,y:712,w:330,n:'2',t:'<b>Wrong tool.</b> Shopify has no native B2B contract pricing, GPO terms or PO-style orders; B2B volume also pollutes storefront analytics.'},
+  {x:930,y:712,w:330,n:'3',t:'<b>No work saved.</b> Still one connector per channel <i>plus</i> the Shopify\u2192SAP connector \u2014 same integrations, just an extra hop.'}
+];
+for(const w of WATCH){const d=document.createElement('div');d.className='watch';d.style.left=w.x+'px';d.style.top=w.y+'px';d.style.width=w.w+'px';
+  d.innerHTML='<div class="b">!</div><div class="wt">'+w.t+'</div>';stage.appendChild(d);}
+
+const tip=document.getElementById('tip');
+function showTip(e){const t=e.currentTarget;if(!t.dataset.tip)return;
+  tip.innerHTML='<div class="th"><span class="sw" style="background:'+(t.dataset.hex||'#8A97A8')+'"></span>'+t.dataset.tipTitle+'</div>'+t.dataset.tip;
+  tip.classList.add('show');moveTip(e);}
+function moveTip(e){const pad=16,w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+pad,y=e.clientY+pad;
+  if(x+w>innerWidth-8)x=e.clientX-w-pad;if(y+h>innerHeight-8)y=e.clientY-h-pad;tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.classList.remove('show');}
+[...document.querySelectorAll('[data-tip]')].forEach(el=>{el.addEventListener('mouseenter',showTip);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);});
+
+const wrap=document.getElementById('stageWrap');
+function fit(){const s=Math.min(1,wrap.clientWidth/1200);stage.style.transform='scale('+s+')';wrap.style.height=(790*s)+'px';}
+new ResizeObserver(fit).observe(wrap);fit();
+</script>
