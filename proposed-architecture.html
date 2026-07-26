@@ -1,0 +1,256 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposed Integration Architecture — Diatech</title>
+<style>
+  :root{
+    --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
+    --shopify:#4C8B2B; --net32:#C6602E; --dentera:#6D4FB0; --other:#566270;
+    --sap:#0A6ED1; --conn:#37517E; --dso:#8B72C4;
+    --orders:#4C63D8; --inv:#0F9E8E;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 520px at 50% -10%, #EEF4FB 0%, rgba(238,244,251,0) 60%),
+      linear-gradient(180deg,#EEF1F7 0%, #E7EBF2 100%);
+    background-attachment:fixed; color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{max-width:1220px; margin:0 auto; padding:26px 22px 44px}
+  .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#B0712A; font-weight:700; margin:0 0 6px}
+  h1{font-size:25px; font-weight:750; letter-spacing:-.01em; margin:0 0 8px}
+  .cap{color:#454C58; font-size:14.5px; margin:0 0 4px; max-width:960px}
+  .cap b{color:var(--ink); font-weight:650}
+  .hint{font-size:12.5px;color:var(--muted);margin:8px 0 14px}
+  .hoverhint{display:inline-block; padding:2px 10px; border-radius:999px; background:rgba(10,110,209,.10); color:#0A6ED1; font-weight:600; font-size:11.5px}
+
+  .stage-wrap{position:relative; overflow:hidden; margin:0 auto; border-radius:22px;
+    background:
+      radial-gradient(620px 340px at 50% 90%, rgba(10,110,209,.10), rgba(10,110,209,0) 70%),
+      radial-gradient(360px 280px at 10% 12%, rgba(76,139,43,.09), rgba(76,139,43,0) 72%),
+      radial-gradient(360px 280px at 90% 12%, rgba(86,98,112,.08), rgba(86,98,112,0) 72%),
+      linear-gradient(160deg,#FBFCFE 0%, #EFF3F9 100%);
+    border:1px solid rgba(28,36,48,.09);
+    box-shadow:0 26px 60px -30px rgba(23,33,52,.42), inset 0 1px 0 rgba(255,255,255,.7);}
+  .stage-wrap::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(28,42,64,.10) 1.1px, transparent 1.3px);
+    background-size:26px 26px; background-position:13px 13px; opacity:.5;
+    -webkit-mask-image:radial-gradient(130% 110% at 50% 45%, #000 55%, transparent 100%);
+    mask-image:radial-gradient(130% 110% at 50% 45%, #000 55%, transparent 100%);}
+  .stage{position:relative; width:1360px; height:720px; transform-origin:top left; z-index:1}
+  #svg{position:absolute; inset:0; width:1360px; height:720px; overflow:visible}
+  .node .ic svg{display:block}
+
+  .node{position:absolute; transform:translate(-50%,-50%); background:var(--panel);
+    border:1px solid var(--line); border-radius:15px; padding:13px 16px;
+    box-shadow:0 8px 20px rgba(23,33,52,.08); transition:transform .18s ease, box-shadow .18s ease;
+    display:flex; gap:12px; align-items:center; cursor:default;}
+  .node:hover{transform:translate(-50%,-50%) translateY(-3px); box-shadow:0 16px 32px rgba(23,33,52,.16), 0 0 0 2px var(--nc,var(--line))}
+  .node .ic{width:40px;height:40px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;color:#fff}
+  .node .nm{font-weight:750;font-size:16px;letter-spacing:-.01em;line-height:1.15}
+  .node .rl{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.25}
+  .node .stock{margin-top:7px;display:inline-flex;align-items:center;gap:6px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;color:#334155;width:max-content}
+  .node .stock i{width:7px;height:7px;border-radius:50%;background:var(--sap);font-style:normal}
+
+  .dso{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid #E7E2F0; border-radius:10px;
+    padding:7px 12px; box-shadow:0 4px 12px rgba(23,33,52,.08); display:flex; gap:8px; align-items:center; cursor:default;
+    transition:transform .16s ease, box-shadow .16s ease;}
+  .dso:hover{transform:translate(-50%,-50%) translateY(-2px); box-shadow:0 10px 20px rgba(23,33,52,.14), 0 0 0 2px var(--dso)}
+  .dso .ic{width:24px;height:24px;border-radius:7px;flex:0 0 auto;display:grid;place-items:center;color:#fff;background:var(--dso)}
+  .dso .dn{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1}
+  .dso .dd{font-size:9.5px;color:var(--muted);margin-top:1px}
+
+  .conn{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid #DfE4EC; border-radius:12px;
+    padding:9px 14px; box-shadow:0 6px 16px rgba(23,33,52,.10); display:flex; gap:10px; align-items:center; cursor:default;
+    transition:transform .18s ease, box-shadow .18s ease;}
+  .conn:hover{transform:translate(-50%,-50%) translateY(-2px); box-shadow:0 12px 24px rgba(23,33,52,.15), 0 0 0 2px var(--conn)}
+  .conn .ic{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;color:#fff;background:var(--conn)}
+  .conn .cl{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8892A4;line-height:1}
+  .conn .cn{font-size:13px;font-weight:700;color:var(--ink);margin-top:2px;line-height:1.1}
+
+  .sap{position:absolute; transform:translate(-50%,-50%); border-radius:20px; color:#fff; cursor:default;
+    background:linear-gradient(135deg,#0A6ED1,#0A56A6); box-shadow:0 18px 40px -12px rgba(10,86,166,.55);
+    padding:18px 26px; display:flex; flex-direction:column; gap:12px; transition:transform .18s ease, box-shadow .18s ease;}
+  .sap:hover{transform:translate(-50%,-50%) translateY(-3px); box-shadow:0 24px 50px -12px rgba(10,86,166,.6)}
+  .sap .top{display:flex; align-items:center; gap:14px}
+  .sap .ic{width:52px;height:52px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,255,255,.16)}
+  .sap .nm{font-size:26px;font-weight:750;letter-spacing:-.01em;line-height:1}
+  .sap .rl{font-size:13px;opacity:.9;margin-top:4px}
+  .sap .stock{margin-left:auto;background:rgba(255,255,255,.16);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .sap .chips{display:flex;gap:10px}
+  .sap .chips div{flex:1;background:rgba(255,255,255,.14);border-radius:10px;padding:8px 6px;font-size:12px;font-weight:650;text-align:center}
+
+  .ftag{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid var(--line);
+    border-radius:999px; padding:4px 11px; font-size:11.5px; font-weight:700; box-shadow:0 3px 9px rgba(23,33,52,.09);
+    display:flex; align-items:center; gap:6px; white-space:nowrap; z-index:3;}
+  .ftag i{width:8px;height:8px;border-radius:50%;font-style:normal}
+  .fdot{filter:drop-shadow(0 0 3px rgba(255,255,255,.9))}
+
+  #tip{position:fixed; z-index:50; max-width:300px; background:#1C2430; color:#F4F6F9; border-radius:11px;
+    padding:11px 13px; font-size:12.8px; line-height:1.5; box-shadow:0 10px 30px rgba(10,15,30,.28);
+    opacity:0; transform:translateY(4px); transition:opacity .13s ease, transform .13s ease; pointer-events:none;}
+  #tip.show{opacity:1; transform:translateY(0)}
+  #tip .th{font-weight:700;font-size:13px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  #tip .th .sw{width:9px;height:9px;border-radius:50%}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Diatech · Proposed Architecture</p>
+  <h1>How orders and inventory flow across every channel</h1>
+  <p class="cap">Every sales channel connects <b>directly to SAP</b> through its own connector. <b>SAP stays the single source of truth</b> — all orders land in SAP for fulfilment, and one live inventory number flows back out to every channel.</p>
+  <p class="hint"><span class="hoverhint">✦ hover any box to see what it does</span></p>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" viewBox="0 0 1360 720"><defs id="defs"></defs><g id="paths"></g></svg>
+    </div>
+  </div>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+const IC={
+  shopify:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+  net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+  dentera:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/></svg>',
+  other:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  dso:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l7-3v18M14 21V9l6 2v10M4 21h18"/></svg>',
+  conn:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13M13 5l4 4-4 4"/><path d="M20 15H7M11 19l-4-4 4-4"/></svg>',
+  sap:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>'
+};
+
+const CH={
+  shopify:{x:240,y:205,w:250,h:94,name:'Shopify',role:'Online storefront — customers',color:'var(--shopify)',ic:IC.shopify,stock:'SKU-123 · 90 in stock',
+    tip:'Your online storefront where customers shop and check out. Orders flow straight to SAP through its own connector.'},
+  net32:{x:540,y:205,w:250,h:94,name:'Net32',role:'Dental-supply marketplace — customers',color:'var(--net32)',ic:IC.net32,stock:'SKU-123 · 90 in stock',
+    tip:'The marketplace where customers order dental supplies. Its orders flow straight to SAP through a dedicated connector — no manual re-keying.'},
+  dentera:{x:840,y:205,w:250,h:94,name:'Dentera',role:'GPO platform — customers',color:'var(--dentera)',ic:IC.dentera,stock:'SKU-123 · 90 in stock',
+    tip:'A Group Purchasing Organization (GPO) platform. Several DSOs order through Dentera; Dentera then connects to SAP through its own connector.'},
+  other:{x:1140,y:205,w:250,h:94,name:'Other Platforms',role:'More channels — customers',color:'var(--other)',ic:IC.other,stock:'SKU-123 · 90 in stock',
+    tip:'Any additional sales channels or platforms where customers order. Each connects to SAP through its own connector.'}
+};
+const DSO={
+  dso1:{x:745,y:74,w:70,h:44,name:'DSO'},
+  dso2:{x:840,y:74,w:70,h:44,name:'DSO'},
+  dso3:{x:935,y:74,w:70,h:44,name:'DSO'}
+};
+const DSO_TIP='A Dental Service Organization. It places its orders through the Dentera GPO platform, which in turn connects to SAP.';
+const CONN={
+  connSho:{x:240,y:410,ch:'shopify'},
+  connNet:{x:540,y:410,ch:'net32'},
+  connDen:{x:840,y:410,ch:'dentera'},
+  connOth:{x:1140,y:410,ch:'other'}
+};
+const CONN_TIP='A dedicated connector links this channel straight to SAP: orders flow down into SAP, and SAP\u2019s live inventory flows back up to the channel — automatically.';
+const SAP={x:690,y:592,w:1010,h:132,
+  tip:'The single source of truth. Every order from every channel lands here for fulfilment; SAP owns inventory and pushes the same live stock number back out to all channels at once.'};
+
+const stage=document.getElementById('stage'), SVG='http://www.w3.org/2000/svg';
+const defs=document.getElementById('defs'), pathsG=document.getElementById('paths');
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const varHex=v=>getComputedStyle(document.documentElement).getPropertyValue(v.replace('var(','').replace(')','')).trim();
+
+const MK={orders:varHex('var(--orders)'), inv:varHex('var(--inv)')};
+for(const [k,hex] of Object.entries(MK)){
+  const m=document.createElementNS(SVG,'marker');
+  m.setAttribute('id','ar-'+k);m.setAttribute('viewBox','0 0 10 10');m.setAttribute('refX','8');m.setAttribute('refY','5');
+  m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');m.setAttribute('orient','auto-start-reverse');
+  const p=document.createElementNS(SVG,'path');p.setAttribute('d','M0 1 L9 5 L0 9 z');p.setAttribute('fill',hex);
+  m.appendChild(p);defs.appendChild(m);
+}
+
+const els={};
+for(const [id,n] of Object.entries(CH)){
+  const el=document.createElement('div');el.className='node';
+  el.style.left=n.x+'px';el.style.top=n.y+'px';el.style.width=n.w+'px';el.style.setProperty('--nc',n.color);
+  el.innerHTML='<div class="ic" style="background:'+n.color+'">'+n.ic+'</div>'+
+    '<div><div class="nm">'+n.name+'</div><div class="rl">'+n.role+'</div>'+
+    '<div class="stock"><i></i>'+n.stock+'</div></div>';
+  el.dataset.tipTitle=n.name;el.dataset.tip=n.tip;el.dataset.hex=varHex(n.color);
+  stage.appendChild(el);els[id]=el;
+}
+for(const [id,d] of Object.entries(DSO)){
+  const el=document.createElement('div');el.className='dso';
+  el.style.left=d.x+'px';el.style.top=d.y+'px';
+  el.innerHTML='<div class="ic">'+IC.dso+'</div><div class="dn">'+d.name+'</div>';
+  el.dataset.tipTitle='DSO';el.dataset.tip=DSO_TIP;el.dataset.hex=varHex('var(--dso)');
+  stage.appendChild(el);
+}
+for(const [id,c] of Object.entries(CONN)){
+  const el=document.createElement('div');el.className='conn';
+  el.style.left=c.x+'px';el.style.top=c.y+'px';
+  el.innerHTML='<div class="ic">'+IC.conn+'</div><div><div class="cl">Connector</div><div class="cn">\u2192 SAP</div></div>';
+  el.dataset.tipTitle='Connector';el.dataset.tip=CONN_TIP;el.dataset.hex=varHex('var(--conn)');
+  stage.appendChild(el);
+}
+const sapEl=document.createElement('div');sapEl.className='sap';
+sapEl.style.left=SAP.x+'px';sapEl.style.top=SAP.y+'px';sapEl.style.width=SAP.w+'px';
+sapEl.innerHTML='<div class="top"><div class="ic">'+IC.sap+'</div>'+
+  '<div><div class="nm">SAP</div><div class="rl">ERP — single source of truth</div></div>'+
+  '<div class="stock">SKU-123 · 90 units</div></div>'+
+  '<div class="chips"><div>Orders</div><div>Inventory</div><div>Fulfilment</div><div>Financials</div></div>';
+sapEl.dataset.tipTitle='SAP';sapEl.dataset.tip=SAP.tip;sapEl.dataset.hex=varHex('var(--sap)');
+stage.appendChild(sapEl);
+
+function rect(n){return {cx:n.x,cy:n.y,hw:n.w/2,hh:n.h/2};}
+function edge(n,tx,ty){const r=rect(n),dx=tx-r.cx,dy=ty-r.cy;if(!dx&&!dy)return{x:r.cx,y:r.cy};
+  const t=Math.min((r.hw+3)/Math.abs(dx||1e-6),(r.hh+3)/Math.abs(dy||1e-6));return{x:r.cx+dx*t,y:r.cy+dy*t};}
+function addBead(pd,hex,dur,begin){
+  const c=document.createElementNS(SVG,'circle');
+  c.setAttribute('r','4');c.setAttribute('fill',hex);c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','1.4');c.setAttribute('class','fdot');
+  const am=document.createElementNS(SVG,'animateMotion');
+  am.setAttribute('dur',dur+'s');am.setAttribute('repeatCount','indefinite');am.setAttribute('path',pd);
+  am.setAttribute('begin',begin+'s');am.setAttribute('calcMode','linear');
+  c.appendChild(am);pathsG.appendChild(c);
+}
+function seg(aNode,bNode,color,dir,curve,beads){
+  const a=edge(aNode,bNode.x,bNode.y), b=edge(bNode,aNode.x,aNode.y);
+  const from=dir==='down'?a:b, to=dir==='down'?b:a;
+  const mx=(from.x+to.x)/2,my=(from.y+to.y)/2,dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1;
+  const nx=-dy/len,ny=dx/len,cxp=mx+nx*curve,cyp=my+ny*curve;
+  const pd='M '+from.x+' '+from.y+' Q '+cxp+' '+cyp+' '+to.x+' '+to.y;
+  const hex=MK[color];
+  const path=document.createElementNS(SVG,'path');
+  path.setAttribute('d',pd);path.setAttribute('fill','none');path.setAttribute('stroke',hex);
+  path.setAttribute('stroke-width','2.8');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-opacity','.4');
+  if(color==='inv')path.setAttribute('stroke-dasharray','7 5');
+  path.setAttribute('marker-end','url(#ar-'+color+')');
+  pathsG.appendChild(path);
+  if(!REDUCE){const dist=Math.hypot(dx,dy),dur=Math.max(2.2,Math.min(4.6,dist/95));
+    for(let i=0;i<(beads||2);i++)addBead(pd,hex,dur,-(dur/(beads||2))*i);}
+}
+
+// four channel lanes: channel <-> connector <-> SAP
+for(const [cid,c] of Object.entries(CONN)){
+  const chNode=CH[c.ch], connNode={x:c.x,y:c.y,w:200,h:52};
+  seg(chNode,connNode,'orders','down',13);
+  seg(chNode,connNode,'inv','up',13);
+  seg(connNode,SAP,'orders','down',13);
+  seg(connNode,SAP,'inv','up',13);
+}
+// DSOs feed orders into Dentera
+for(const k in DSO){ seg(DSO[k],CH.dentera,'orders','down',6,1); }
+
+function tag(x,y,text,hex){const d=document.createElement('div');d.className='ftag';d.style.left=x+'px';d.style.top=y+'px';
+  d.innerHTML='<i style="background:'+hex+'"></i>'+text;stage.appendChild(d);}
+tag(360,312,'Orders \u2193',MK.orders);
+tag(475,312,'Inventory \u2191',MK.inv);
+
+const tip=document.getElementById('tip');
+function showTip(e){const t=e.currentTarget;if(!t.dataset.tip)return;
+  tip.innerHTML='<div class="th"><span class="sw" style="background:'+(t.dataset.hex||'#8A97A8')+'"></span>'+t.dataset.tipTitle+'</div>'+t.dataset.tip;
+  tip.classList.add('show');moveTip(e);}
+function moveTip(e){const pad=16,w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+pad,y=e.clientY+pad;
+  if(x+w>innerWidth-8)x=e.clientX-w-pad;if(y+h>innerHeight-8)y=e.clientY-h-pad;tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.classList.remove('show');}
+[...document.querySelectorAll('[data-tip]')].forEach(el=>{
+  el.addEventListener('mouseenter',showTip);el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);});
+
+const wrap=document.getElementById('stageWrap');
+function fit(){const s=Math.min(1,wrap.clientWidth/1360);stage.style.transform='scale('+s+')';wrap.style.height=(720*s)+'px';}
+new ResizeObserver(fit).observe(wrap);fit();
+</script>
