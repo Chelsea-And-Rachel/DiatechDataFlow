@@ -4,7 +4,7 @@
 <style>
   :root{
     --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
-    --net32:#C6602E; --dentera:#6D4FB0; --other:#566270; --shopify:#4C8B2B;
+    --net32:#C6602E; --Dentira:#6D4FB0; --other:#566270; --shopify:#4C8B2B;
     --sap:#0A6ED1; --orders:#4C63D8; --inv:#0F9E8E; --dso:#8B72C4;
     --warn:#C77D2E; --warnbg:#FBF1E3; --warnbd:#EAD5B5;
   }
@@ -132,7 +132,7 @@
   <p class="eyebrow">Diatech · Client-Requested Approach</p>
   <h1>Routing every channel through Shopify</h1>
   <p class="sub">Why this adds risk</p>
-  <p class="cap">In this version, Net32, Dentera and other platforms all route <b>through Shopify</b> to reach SAP. Every order and every inventory update takes <b>an extra hop</b> — and Shopify becomes a relay for orders it wasn't built to handle.</p>
+  <p class="cap">In this version, Net32, Dentira and other platforms all route <b>through Shopify</b> to reach SAP. Every order and every inventory update takes <b>an extra hop</b> — and Shopify becomes a relay for orders it wasn't built to handle.</p>
   <p class="hint"><span class="hoverhint">✦ hover any box or ⚠ for detail</span></p>
 
   <div class="stage-wrap" id="stageWrap">
@@ -146,7 +146,7 @@
 <script>
 const IC={
   net32:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
-  dentera:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/></svg>',
+  Dentira:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/></svg>',
   other:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
   shopify:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
   dso:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l7-3v18M14 21V9l6 2v10M4 21h18"/></svg>',
@@ -155,7 +155,7 @@ const IC={
 const CH={
   net32:{x:300,y:210,w:250,h:92,name:'Net32',role:'Dental-supply marketplace — customers',color:'var(--net32)',ic:IC.net32,stock:'SKU-123 · 100 · lagging',lag:1,
     tip:'Customers order here. But Net32 doesn\u2019t list or check out on Shopify \u2014 so pushing its orders through Shopify is a forced data pass-through, not a real integration.'},
-  dentera:{x:600,y:210,w:250,h:92,name:'Dentera',role:'GPO platform (with DSOs) — customers',color:'var(--dentera)',ic:IC.dentera,stock:'SKU-123 · 100 · lagging',lag:1,
+  Dentira:{x:600,y:210,w:250,h:92,name:'Dentira',role:'GPO platform (with DSOs) — customers',color:'var(--Dentira)',ic:IC.Dentira,stock:'SKU-123 · 100 · lagging',lag:1,
     tip:'A GPO platform (its DSOs order through it). Its GPO/contract terms have no native equivalent in Shopify\u2019s order model.'},
   other:{x:900,y:210,w:250,h:92,name:'Other Platforms',role:'More channels — customers',color:'var(--other)',ic:IC.other,stock:'SKU-123 · 100 · lagging',lag:1,
     tip:'Additional platforms, each still needing its own connector \u2014 routed through Shopify rather than straight to SAP.'}
@@ -165,7 +165,7 @@ const DSO={
   dso2:{x:600,y:80,w:70,h:44,name:'DSO'},
   dso3:{x:695,y:80,w:70,h:44,name:'DSO'}
 };
-const DSO_TIP='A Dental Service Organization. It places its orders through the Dentera GPO platform \u2014 which, in this approach, then routes through Shopify before reaching SAP.';
+const DSO_TIP='A Dental Service Organization. It places its orders through the Dentira GPO platform \u2014 which, in this approach, then routes through Shopify before reaching SAP.';
 const SHOP={x:600,y:432,w:340,h:120,
   tip:'In the client\u2019s approach Shopify becomes the middle layer for every channel. But it was built as a DTC storefront \u2014 it has no native concept of B2B contract pricing, GPO terms or PO-style orders, and every order and inventory update now passes through it, adding a hop and mixing B2B volume into storefront analytics.'};
 const SAP={x:600,y:650,w:940,h:132,
@@ -244,8 +244,8 @@ function seg(aNode,bNode,color,dir,curve,width){
 for(const id in CH){ seg(CH[id],SHOP,'orders','down',13); seg(CH[id],SHOP,'inv','up',13); }
 // hop 2: Shopify -> SAP (thicker to emphasise the funnel)
 seg(SHOP,SAP,'orders','down',16,3.4); seg(SHOP,SAP,'inv','up',16,3.4);
-// DSOs feed orders into Dentera
-for(const k in DSO){ seg(DSO[k],CH.dentera,'orders','down',6); }
+// DSOs feed orders into Dentira
+for(const k in DSO){ seg(DSO[k],CH.Dentira,'orders','down',6); }
 
 function tag(x,y,text,hex,warn){const d=document.createElement('div');d.className='ftag'+(warn?' warn':'');d.style.left=x+'px';d.style.top=y+'px';
   d.innerHTML=(hex?'<i style="background:'+hex+'"></i>':'')+text;stage.appendChild(d);}
