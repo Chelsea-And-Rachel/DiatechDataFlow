@@ -112,6 +112,7 @@
   <a href="index.html" data-f="index.html">Data Flow</a>
   <a href="proposed-architecture.html" data-f="proposed-architecture.html">Proposed Architecture</a>
   <a href="client-approach.html" data-f="client-approach.html">Client-Requested</a>
+  <a href="comparison.html" data-f="comparison.html">Comparison</a>
 </nav>
 <script>
   (function(){
@@ -168,7 +169,7 @@ const DSO={
 };
 const DSO_TIP='A Dental Service Organization. It places its orders through the Dentira GPO platform, which in turn connects to SAP.';
 const CONN={
-  connSho:{x:200,y:410,ch:'shopify',name:'APPSeConnect',
+  connSho:{x:200,y:410,ch:'shopify',name:'APPSeConnect → SAP',title:'APPSeConnect',
     tip:'APPSeConnect is the integration app that links Shopify straight to SAP: orders flow down into SAP and SAP’s live inventory flows back up to the storefront — automatically, with no middle layer in between.'},
   connNet:{x:490,y:410,ch:'net32'},
   connDen:{x:780,y:410,ch:'Dentira'},
@@ -214,7 +215,7 @@ for(const [id,c] of Object.entries(CONN)){
   const el=document.createElement('div');el.className='conn';
   el.style.left=c.x+'px';el.style.top=c.y+'px';
   el.innerHTML='<div class="ic">'+IC.conn+'</div><div><div class="cl">Connector</div><div class="cn">'+(c.name||'\u2192 SAP')+'</div></div>';
-  el.dataset.tipTitle=c.name||'Connector';el.dataset.tip=c.tip||CONN_TIP;el.dataset.hex=varHex('var(--conn)');
+  el.dataset.tipTitle=c.title||c.name||'Connector';el.dataset.tip=c.tip||CONN_TIP;el.dataset.hex=varHex('var(--conn)');
   stage.appendChild(el);
 }
 const sapEl=document.createElement('div');sapEl.className='sap';
