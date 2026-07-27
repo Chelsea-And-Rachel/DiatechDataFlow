@@ -140,7 +140,7 @@
   <p class="eyebrow">Diatech · Client-Requested Approach</p>
   <h1>Routing every channel through Shopify</h1>
   <p class="sub">Why this adds risk</p>
-  <p class="cap">In this version, Net32, Dentira, ZenOne and other platforms all route <b>through Shopify</b> to reach SAP — Net32 via <b>Commercium</b>, then Shopify to SAP via <b>APPSeConnect</b>. Every order and every inventory update takes <b>an extra hop</b>, using Shopify as an integration hub introduces additional dependencies and operational complexity beyond its primary ecommerce role..</p>
+  <p class="cap">In this version, Net32, Dentira, ZenOne and other platforms all route <b>through Shopify</b> to reach SAP. Each channel <b>still needs its own connector</b> — Net32 via <b>Commercium</b>, one per platform alongside it — and then <b>a further connector</b>, APPSeConnect, to carry everything from Shopify into SAP. Every order and every inventory update takes <b>an extra hop</b>, using Shopify as an integration hub introduces additional dependencies and operational complexity beyond its primary ecommerce role..</p>
   <p class="hint"><span class="hoverhint">✦ hover any box or ⚠ for detail</span></p>
 
   <div class="stage-wrap" id="stageWrap">
@@ -259,18 +259,25 @@ seg(SHOP,SAP,'orders','down',16,3.4); seg(SHOP,SAP,'inv','up',16,3.4);
 // DSOs feed orders into Dentira
 for(const k in DSO){ seg(DSO[k],CH.Dentira,'orders','down',6); }
 
-// the two connector apps that sit on this route
+// every channel still needs its own connector \u2014 here they all point at Shopify,
+// and a second connector (APPSeConnect) carries everything on to SAP
 const CONNS=[
-  {x:368,y:299,name:'Commercium',
+  {x:380,y:299,name:'Commercium',
    tip:'The connector app between Net32 and Shopify. In this approach every Net32 order and every stock update has to pass through it into Shopify first \u2014 then a second connector carries it on to SAP.'},
+  {x:560,y:299,
+   tip:'Dentira still needs its own connector \u2014 but it now delivers into Shopify instead of SAP, and Shopify has no native equivalent for Dentira\u2019s GPO/contract terms. Every order then makes a second hop through APPSeConnect to reach SAP.'},
+  {x:740,y:299,
+   tip:'ZenOne still needs its own connector. Pointing it at Shopify rather than SAP saves no integration work \u2014 it just means every ZenOne order and stock update inherits the extra relay hop.'},
+  {x:920,y:299,
+   tip:'Every additional platform still needs its own connector too. Routing them through Shopify doesn\u2019t remove a single integration \u2014 it only adds a hop in front of SAP.'},
   {x:800,y:538,name:'APPSeConnect',
    tip:'The connector app between Shopify and SAP. Here it carries not only Shopify\u2019s own orders but every other channel\u2019s too \u2014 so all traffic is funnelled through this one hop.'}
 ];
 for(const c of CONNS){
   const el=document.createElement('div');el.className='conn';
   el.style.left=c.x+'px';el.style.top=c.y+'px';
-  el.innerHTML='<div class="ic">'+IC.conn+'</div><div><div class="cl">Connector</div><div class="cn">'+c.name+'</div></div>';
-  el.dataset.tipTitle=c.name;el.dataset.tip=c.tip;el.dataset.hex=varHex('var(--conn)');
+  el.innerHTML='<div class="ic">'+IC.conn+'</div><div><div class="cl">Connector</div><div class="cn">'+(c.name||'\u2192 Shopify')+'</div></div>';
+  el.dataset.tipTitle=c.name||'Connector';el.dataset.tip=c.tip;el.dataset.hex=varHex('var(--conn)');
   stage.appendChild(el);
 }
 
