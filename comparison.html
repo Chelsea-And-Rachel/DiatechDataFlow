@@ -1,0 +1,622 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approach Comparison — Diatech</title>
+<style>
+  :root{
+    --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
+    --frame:#C9CFD9; --board:#FCFCFD;
+    --sap:#0A6ED1; --orders:#4C63D8; --inv:#0F9E8E;
+    --risk:#C2255C; --redink:#D6272B;
+    --pro:#1B7A3D; --con:#C0561F;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 520px at 50% -10%, #EEF4FB 0%, rgba(238,244,251,0) 60%),
+      linear-gradient(180deg,#EEF1F7 0%, #E7EBF2 100%);
+    background-attachment:fixed; color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{max-width:1840px; margin:0 auto; padding:26px 22px 44px}
+  .eyebrow{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#B0712A; font-weight:700; margin:0 0 6px}
+  h1{font-size:25px; font-weight:750; letter-spacing:-.01em; margin:0 0 8px}
+  .cap{color:#454C58; font-size:14.5px; margin:0 0 4px; max-width:960px}
+  .cap b{color:var(--ink); font-weight:650}
+  .hint{font-size:12.5px;color:var(--muted);margin:8px 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .hoverhint{display:inline-block; padding:2px 10px; border-radius:999px; background:rgba(10,110,209,.10); color:#0A6ED1; font-weight:600; font-size:11.5px}
+
+  .zoom{display:inline-flex;gap:2px;background:#EDF0F5;border:1px solid #E1E6EE;border-radius:999px;padding:3px}
+  .zoom button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:650;color:#5A6472;
+    padding:5px 13px;border-radius:999px;cursor:pointer;transition:background .15s ease,color .15s ease}
+  .zoom button:hover{color:var(--ink)}
+  .zoom button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(20,30,50,.14)}
+  .zoom button:focus-visible{outline:2px solid var(--sap);outline-offset:2px}
+
+  /* ---- the board ---- */
+  .stage-wrap{position:relative; margin:0 auto; border-radius:14px; overflow:hidden;
+    background:var(--board);
+    border:1px solid rgba(28,36,48,.12);
+    box-shadow:0 26px 60px -30px rgba(23,33,52,.42), inset 0 1px 0 rgba(255,255,255,.7);}
+  .stage{position:relative; width:2140px; height:1600px; transform-origin:top left; z-index:1;
+    background-image:radial-gradient(rgba(28,42,64,.16) 1.1px, transparent 1.3px);
+    background-size:26px 26px; background-position:13px 13px;}
+  #svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none}
+
+  /* ---- MIRO frame ---- */
+  .frame{position:absolute; border:1px solid var(--frame); background:rgba(255,255,255,.55); border-radius:2px}
+  .frame-t{position:absolute; text-align:center; font-size:15px; font-weight:800;
+    letter-spacing:.10em; text-transform:uppercase; color:var(--ink)}
+  .lane-t{position:absolute; transform:translateX(-50%); text-align:center; white-space:nowrap}
+  .lane-t .n{font-size:14px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+  .lane-t .s{font-size:12px;font-style:italic;color:var(--redink);font-weight:600;margin-top:2px}
+  .divider{position:absolute; border-left:1px dashed #D8DDE5}
+
+  /* ---- MIRO flow shapes ---- */
+  .mn{position:absolute; transform:translate(-50%,-50%); background:#fff;
+    border:1.5px solid #2A3442; border-radius:9px; color:var(--ink);
+    display:grid; place-items:center; text-align:center; padding:8px 12px;
+    font-size:12.5px; line-height:1.32; cursor:default; transition:box-shadow .16s ease, transform .16s ease;}
+  .mn:hover{box-shadow:0 8px 18px rgba(23,33,52,.16); transform:translate(-50%,-50%) translateY(-2px)}
+  .mn:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(10,110,209,.45)}
+  .mn b{font-weight:750}
+  .mn .sm{display:block;font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.25}
+  .mn.oval{border-radius:999px}
+  .mn.blue{border-color:var(--sap); color:var(--sap)}
+  .mn.blue .sm{color:#5B8FC4}
+  .mn.risk{border-color:var(--risk); color:var(--risk)}
+  .mn.risk .sm{color:#C4708F}
+
+  .cloud{position:absolute; transform:translate(-50%,-50%); background:#fff;
+    border:1.6px solid var(--risk); color:var(--risk);
+    border-radius:62% 44% 56% 50% / 54% 62% 44% 56%;
+    padding:20px 24px; font-size:11.5px; font-style:italic; text-align:center; line-height:1.4; font-weight:600;
+    cursor:default;}
+  .cloud:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(194,37,92,.35)}
+
+  .pin{position:absolute; transform:translate(-50%,-50%); width:32px; height:32px;
+    border-radius:50% 50% 50% 5px; background:#2D9BF0; color:#fff; display:grid; place-items:center;
+    font-size:11.5px; font-weight:800; box-shadow:0 3px 9px rgba(45,155,240,.45); cursor:default; z-index:5;}
+
+  .ftag{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid var(--line);
+    border-radius:999px; padding:5px 13px; font-size:12px; font-weight:700; box-shadow:0 3px 9px rgba(23,33,52,.09);
+    display:flex; align-items:center; gap:7px; white-space:nowrap; z-index:3;}
+  .ftag i{width:9px;height:9px;border-radius:50%;font-style:normal;flex:0 0 auto}
+  .ftag.dash i{border-radius:2px;height:4px;width:15px}
+  .ftag.good{background:#EAF6EE;border-color:#CBE8D5;color:#1B7A3D}
+  .ftag.bad{background:#FCEDF2;border-color:#F2CEDC;color:var(--risk)}
+  .ftag.mark{font-weight:650;font-style:italic;color:#5A6472;font-size:11.5px}
+
+  .lanenote{position:absolute; transform:translate(-50%,-50%); text-align:center;
+    font-size:13px; font-weight:750; color:#8A94A3; line-height:1.4;}
+  .lanenote span{display:block;margin-top:6px;font-size:11.5px;font-weight:500;font-style:italic;color:#9BA4B2;line-height:1.5}
+
+  /* ---- key card ---- */
+  .keyrow{display:flex;gap:11px;align-items:flex-start;margin-top:11px;font-size:11.5px;line-height:1.45}
+  .keyrow .sw{flex:0 0 auto;width:26px;margin-top:6px;display:grid;place-items:center}
+  .keyrow .sw .ln{width:26px;height:0;border-top:2.4px solid currentColor}
+  .keyrow .sw .ln.d{border-top-style:dashed}
+  .keyrow .sw .bx{width:22px;height:15px;border:1.6px solid currentColor;border-radius:4px}
+  .keyrow .kt{color:#4A5260}
+  .keyrow .kt b{color:var(--ink);font-weight:750}
+
+  /* ---- MIRO panels ---- */
+  .panel{position:absolute; background:#fff; border:1px solid var(--frame); border-radius:2px; padding:22px 24px 24px;
+    box-shadow:0 2px 10px rgba(23,33,52,.05);}
+  .panel h3{margin:0; text-align:center; font-size:15.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase}
+  .panel .psub{margin:3px 0 0; text-align:center; font-size:12.5px; font-style:italic; font-weight:600; color:var(--redink)}
+  .panel .rule{height:1px;background:var(--line);margin:16px 0 4px}
+  .glabel{display:flex;align-items:center;gap:8px;margin:16px 0 2px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+  .glabel.p{color:var(--pro)} .glabel.c{color:var(--con)}
+  .glabel .bar{flex:1;height:1px;background:currentColor;opacity:.25}
+
+  .item{display:flex;gap:10px;margin-top:12px}
+  .item .mk{flex:0 0 auto;width:16px;height:16px;border-radius:5px;display:grid;place-items:center;
+    font-size:12px;font-weight:800;color:#fff;margin-top:1px;line-height:1}
+  .item.p .mk{background:var(--pro)} .item.c .mk{background:var(--con)}
+  .item .t{font-size:12.5px;font-weight:750;line-height:1.3}
+  .item .d{font-size:11.5px;font-style:italic;color:#4A5260;line-height:1.45;margin-top:2px}
+
+  /* ---- scorecard ---- */
+  .score .row{display:grid;grid-template-columns:1fr 60px 60px;gap:6px;align-items:center;
+    padding:8px 0;border-bottom:1px dashed #E7EAF0;font-size:11.5px}
+  .score .row:last-of-type{border-bottom:0}
+  .score .hd{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    border-bottom:1px solid var(--line);padding-bottom:6px}
+  .score .k{line-height:1.3}
+  .score .v{text-align:center;font-weight:800;font-size:12px}
+  .score .v.win{color:var(--pro)} .score .v.lose{color:var(--risk)}
+  .callout{margin-top:18px;background:var(--sap);color:#fff;text-align:center;
+    padding:13px 14px;font-size:12px;font-weight:650;line-height:1.4}
+
+  #tip{position:fixed; z-index:50; max-width:310px; background:#1C2430; color:#F4F6F9; border-radius:11px;
+    padding:11px 13px; font-size:12.8px; line-height:1.5; box-shadow:0 10px 30px rgba(10,15,30,.28);
+    opacity:0; transform:translateY(4px); transition:opacity .13s ease, transform .13s ease; pointer-events:none;}
+  #tip.show{opacity:1; transform:translateY(0)}
+  #tip .th{font-weight:700;font-size:13px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  #tip .th .sw{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <!-- ===== flow nav ===== -->
+<style>
+  .flownav{display:inline-flex;gap:4px;background:#EDF0F5;border:1px solid #E1E6EE;border-radius:999px;
+    padding:4px;margin:0 0 18px;box-shadow:0 1px 3px rgba(20,30,50,.06);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;flex-wrap:wrap}
+  .flownav a{text-decoration:none;font-weight:600;font-size:13px;color:#5A6472;padding:8px 15px;
+    border-radius:999px;transition:all .15s ease;white-space:nowrap}
+  .flownav a:hover{color:#1C2430}
+  .flownav a.active{background:#fff;color:#1C2430;box-shadow:0 1px 3px rgba(20,30,50,.14)}
+</style>
+<nav class="flownav" id="flownav">
+  <a href="index.html" data-f="index.html">Data Flow</a>
+  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Proposed Architecture</a>
+  <a href="client-approach.html" data-f="client-approach.html">Client-Requested</a>
+  <a href="comparison.html" data-f="comparison.html">Comparison</a>
+</nav>
+<script>
+  (function(){
+    var f = location.pathname.split('/').pop();
+    if(!f) f = 'index.html';
+    document.querySelectorAll('#flownav a').forEach(function(a){
+      if(a.getAttribute('data-f') === f) a.classList.add('active');
+    });
+  })();
+</script>
+<!-- ===== end flow nav ===== -->
+
+  <p class="eyebrow">Diatech · Approach Comparison</p>
+  <h1>Direct to SAP, or everything through Shopify?</h1>
+  <p class="cap">Both approaches need <b>the same five connectors</b>. What changes is what sits between a channel and SAP — and what happens when that thing is down. The two flows are drawn side by side at <b>the same distance per hop</b>, so where each lane ends is where that approach actually lands.</p>
+  <p class="hint">
+    <span class="hoverhint">✦ hover any shape for detail</span>
+    <span class="zoom" role="group" aria-label="Board zoom">
+      <button type="button" id="zFit" aria-pressed="true">Fit</button>
+      <button type="button" id="z100" aria-pressed="false">100%</button>
+    </span>
+    <span>Zoom to 100% to read the board, then scroll to pan.</span>
+  </p>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" viewBox="0 0 2140 1600" preserveAspectRatio="none" aria-hidden="true"><defs id="defs"></defs><g id="paths"></g></svg>
+
+      <!-- ================= FLOW FRAME ================= -->
+      <div class="frame" id="frame" style="left:40px;top:70px;width:1120px;height:1400px"></div>
+      <div class="frame-t" style="left:40px;top:92px;width:1120px">Order &amp; inventory flow — side by side</div>
+      <div class="divider" id="divider" style="left:585px;top:150px;height:1300px"></div>
+
+      <div class="lane-t" style="left:315px;top:150px">
+        <div class="n">Proposed</div>
+        <div class="s">Channel → connector → SAP</div>
+      </div>
+      <div class="lane-t" style="left:835px;top:150px">
+        <div class="n">Client-requested</div>
+        <div class="s">Channel → connector → Shopify → connector → SAP</div>
+      </div>
+
+      <!-- ---- lane A : 4 stops, 170px apart ---- -->
+      <div class="mn oval ctr" id="a1" style="left:315px;top:290px;width:250px;height:68px"
+        data-tip-title="Customer order"
+        data-tip="A customer checks out on whichever channel they use — the storefront, the marketplace, or their GPO platform. Identical in both approaches; everything after this is what differs.">
+        <div>A customer orders on a channel</div>
+      </div>
+
+      <div class="mn ctr" id="a2" style="left:315px;top:460px;width:262px;height:74px"
+        data-tip-title="Five channels"
+        data-tip="Shopify, Net32, Dentira, ZenOne and any additional platform. Here Shopify is one channel among five — a place customers buy, not a hub the others pass through.">
+        <div><b>Shopify · Net32 · Dentira</b><span class="sm">ZenOne · other platforms</span></div>
+      </div>
+
+      <div class="mn ctr" id="a3" style="left:315px;top:630px;width:230px;height:62px"
+        data-tip-title="One connector per channel"
+        data-tip="Five connectors, each mapping one channel's orders into SAP and carrying SAP's stock number back out. APPSeConnect is the one that serves Shopify.">
+        <div>Each channel's own connector<span class="sm">five in total</span></div>
+      </div>
+
+      <div class="mn blue ctr" id="a4" style="left:315px;top:800px;width:252px;height:76px"
+        data-tip-title="SAP"
+        data-tip="The order lands here and stock decrements immediately. SAP owns the number and publishes the same one back to every channel at once, so no channel drifts out of step with another.">
+        <div><b>SAP</b><span class="sm">order lands · stock decrements · one number out</span></div>
+      </div>
+
+      <!-- ---- lane B : 6 stops, the same 170px apart ---- -->
+      <div class="mn oval ctr" id="b1" style="left:835px;top:290px;width:250px;height:68px"
+        data-tip-title="Customer order"
+        data-tip="The same starting point as the proposed flow. A customer checks out on a channel.">
+        <div>A customer orders on a channel</div>
+      </div>
+
+      <div class="mn ctr" id="b2" style="left:835px;top:460px;width:262px;height:64px"
+        data-tip-title="Four channels — Shopify has moved"
+        data-tip="Net32, Dentira, ZenOne and other platforms. Shopify is no longer beside them: it has been moved underneath, as the layer they all have to pass through.">
+        <div><b>Net32 · Dentira · ZenOne</b><span class="sm">other platforms</span></div>
+      </div>
+
+      <div class="mn ctr" id="b3" style="left:835px;top:630px;width:248px;height:64px"
+        data-tip-title="Still one connector per channel"
+        data-tip="Nothing is saved here. Every channel still needs its own connector — it just points at Shopify instead of SAP. The same integrations get built, mapped and maintained.">
+        <div>Each channel's own connector<span class="sm">still one each — now pointing at Shopify</span></div>
+      </div>
+
+      <div class="mn risk ctr" id="b4" style="left:835px;top:800px;width:252px;height:80px"
+        data-tip-title="Shopify as relay"
+        data-tip="Shopify was built as a DTC storefront. Here it carries marketplace and GPO traffic it has no native model for — no contract pricing, no GPO terms, no PO-style orders — and every message in both directions has to cross it.">
+        <div><b>Shopify — relay</b><span class="sm">carrying orders it wasn't built for</span></div>
+      </div>
+
+      <div class="mn ctr" id="b5" style="left:835px;top:970px;width:210px;height:58px"
+        data-tip-title="APPSeConnect"
+        data-tip="The sixth integration. In the proposed flow this is simply Shopify's own connector; here it also has to carry every other channel's traffic, which makes it the narrowest point in the whole system.">
+        <div><b>APPSeConnect</b></div>
+      </div>
+
+      <div class="mn blue ctr" id="b6" style="left:835px;top:1140px;width:252px;height:76px"
+        data-tip-title="SAP"
+        data-tip="The order finally lands and stock decrements — two hops after the customer placed it. The new number then has to travel the same two hops back out before any channel sees it.">
+        <div><b>SAP</b><span class="sm">order lands · stock decrements</span></div>
+      </div>
+
+      <div class="cloud ctr" id="cloud" style="left:1058px;top:660px;width:172px"
+        data-tip-title="The overselling window"
+        data-tip="SAP has already decremented to 90. Until the new number crosses APPSeConnect, then Shopify, then each channel's own connector, every channel is still quoting 100 — and still taking orders against it.">
+        SAP already says 90. The channels still show 100.
+      </div>
+
+      <div class="pin" id="pin"
+        data-tip-title="Board comment"
+        data-tip="Worth saying out loud: routing through Shopify does not retire a single connector. It adds one. The five channel connectors get built either way.">1</div>
+
+      <!-- ---- the marker line: where the proposed flow has already finished ---- -->
+      <div class="ftag mark" id="markTag" style="left:575px;top:920px">
+        By here the proposed flow has landed in SAP — the client flow is only at Shopify
+      </div>
+
+      <div class="ftag good" id="tagA" style="left:315px;top:940px">1 hop each way</div>
+      <div class="ftag bad"  id="tagB" style="left:835px;top:1250px">2 hops each way</div>
+
+      <!-- the empty half of lane A is the point, so it gets said out loud -->
+      <div class="lanenote" id="laneNote" style="left:315px;top:1090px;width:300px">
+        Nothing further to draw.<br>
+        <span>The order is already in SAP, and the new stock number is already on its way back out to every channel.</span>
+      </div>
+
+      <!-- ================= PANEL: PROPOSED ================= -->
+      <div class="panel" id="pProp" style="left:1200px;top:70px;width:430px">
+        <h3>Proposed architecture</h3>
+        <p class="psub">Every channel connects directly to SAP</p>
+        <div class="rule"></div>
+
+        <div class="glabel p">Pros<span class="bar"></span></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">One hop per message</div>
+          <div class="d">An order crosses a single connector to reach SAP, and the new stock number crosses one to get back. Nothing waits on a relay.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">SAP stays the source of truth</div>
+          <div class="d">Inventory is owned in one place and published to every channel at once, so no channel drifts out of step with another.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">Failure stays local</div>
+          <div class="d">A connector outage takes one channel offline. The other four keep selling.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">B2B terms survive the trip</div>
+          <div class="d">Dentira's GPO contract pricing and PO-style orders land in the system that models them, instead of being flattened into a storefront order.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">No extra integration</div>
+          <div class="d">Shopify is one of the five channels, not a hub. The connector count is identical either way.</div>
+        </div></div>
+
+        <div class="glabel c">Cons<span class="bar"></span></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">Five SAP-facing integrations</div>
+          <div class="d">Each channel is mapped and maintained on its own; there is no shared translation layer to fix things in one place.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">Load lands on SAP directly</div>
+          <div class="d">Peak concurrency and API rate limits have to be handled connector by connector.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">No single console</div>
+          <div class="d">Seeing all channel traffic in one view takes deliberate monitoring; the topology doesn't hand it to you.</div>
+        </div></div>
+      </div>
+
+      <!-- ================= PANEL: CLIENT-REQUESTED ================= -->
+      <div class="panel" id="pClient" style="left:1200px;top:820px;width:430px">
+        <h3>Client-requested approach</h3>
+        <p class="psub">Every channel routes through Shopify to reach SAP</p>
+        <div class="rule"></div>
+
+        <div class="glabel p">Pros<span class="bar"></span></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">One familiar console</div>
+          <div class="d">Orders from every channel appear in the Shopify admin the team already works in each day.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">One SAP-facing contract</div>
+          <div class="d">Only APPSeConnect touches SAP, so SAP-side change control and certification cover a single interface.</div>
+        </div></div>
+
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">A shared normalization point</div>
+          <div class="d">Product data is cleaned once in Shopify's catalogue rather than mapped channel by channel.</div>
+        </div></div>
+
+        <div class="glabel c">Cons<span class="bar"></span></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">An extra hop on every message</div>
+          <div class="d">Orders and stock updates both cross Shopify. SAP says 90 while the channels still show 100 — and that gap is the overselling window.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">No integrations saved</div>
+          <div class="d">Every channel still needs its own connector; they just point at Shopify. Add APPSeConnect and it is six integrations, not five.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">One outage stops everything</div>
+          <div class="d">Shopify or APPSeConnect going down takes all channels offline at once, rather than one.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">The wrong data model</div>
+          <div class="d">Shopify has no native B2B contract pricing, GPO terms or PO-style orders, so Dentira's terms must be forced into a DTC order object.</div>
+        </div></div>
+
+        <div class="item c"><div class="mk">−</div><div>
+          <div class="t">Storefront reporting stops being true</div>
+          <div class="d">Marketplace and GPO volume lands in Shopify's own numbers, and consumes order volume and API budget that was never a Shopify sale.</div>
+        </div></div>
+      </div>
+
+      <!-- ================= SCORECARD ================= -->
+      <div class="panel score" id="pScore" style="left:1710px;top:70px;width:390px">
+        <h3>Decision scorecard</h3>
+        <p class="psub">Same five connectors — here is what actually differs</p>
+        <div class="rule"></div>
+
+        <div class="row hd"><div>Criterion</div><div style="text-align:center">Proposed</div><div style="text-align:center">Client</div></div>
+        <div class="row"><div class="k">Hops per order &amp; per stock update</div><div class="v win">1</div><div class="v lose">2</div></div>
+        <div class="row"><div class="k">Integrations to build &amp; maintain</div><div class="v win">5</div><div class="v lose">6</div></div>
+        <div class="row"><div class="k">Channels lost to one outage</div><div class="v win">1</div><div class="v lose">All</div></div>
+        <div class="row"><div class="k">Native B2B / GPO order model</div><div class="v win">Yes</div><div class="v lose">No</div></div>
+        <div class="row"><div class="k">Storefront analytics stay clean</div><div class="v win">Yes</div><div class="v lose">No</div></div>
+
+        <div class="callout">Same connector count. One less hop. SAP stays the source of truth.</div>
+      </div>
+
+      <!-- ================= RECOMMENDATION ================= -->
+      <div class="panel" id="pRec" style="left:1710px;top:560px;width:390px">
+        <h3>Recommendation</h3>
+        <p class="psub">Connect every channel directly to SAP</p>
+        <div class="rule"></div>
+
+        <div class="item"><div>
+          <div class="t">The verdict</div>
+          <div class="d">Direct-to-SAP costs the same number of connectors and removes a hop from every order and every stock update. Routing through Shopify adds a sixth integration and a shared point of failure without retiring a single one.</div>
+        </div></div>
+
+        <div class="item"><div>
+          <div class="t">Where the client is right</div>
+          <div class="d">Wanting one place to watch orders, and one interface to certify against SAP, are both real needs. The relay is the wrong way to meet them.</div>
+        </div></div>
+
+        <div class="item"><div>
+          <div class="t">How to meet it instead</div>
+          <div class="d">Keep Shopify as a channel and put the single console in a connector dashboard reading from SAP — one view of all channel traffic, no extra hop.</div>
+        </div></div>
+
+        <div class="item"><div>
+          <div class="t">If Shopify must be the hub</div>
+          <div class="d">Then scope it honestly: budget for the sixth integration, a custom mapping for GPO and contract orders, and a reconciliation process that checks both hops.</div>
+        </div></div>
+      </div>
+
+      <!-- ================= KEY ================= -->
+      <div class="panel" id="pKey" style="left:1710px;top:1100px;width:390px">
+        <h3>How to read this board</h3>
+        <p class="psub">Same shapes and same spacing in both lanes</p>
+        <div class="rule"></div>
+
+        <div class="keyrow" style="color:#4C63D8">
+          <div class="sw"><div class="ln"></div></div>
+          <div class="kt"><b>Solid blue, downward</b> — an order travelling toward SAP.</div>
+        </div>
+        <div class="keyrow" style="color:#0F9E8E">
+          <div class="sw"><div class="ln d"></div></div>
+          <div class="kt"><b>Dashed teal, upward</b> — the updated stock number travelling back out to the channels.</div>
+        </div>
+        <div class="keyrow" style="color:#0A6ED1">
+          <div class="sw"><div class="bx"></div></div>
+          <div class="kt"><b>Blue outline</b> — SAP, the system of record.</div>
+        </div>
+        <div class="keyrow" style="color:#C2255C">
+          <div class="sw"><div class="bx"></div></div>
+          <div class="kt"><b>Pink outline</b> — where this approach adds risk, with the annotation attached to it.</div>
+        </div>
+        <div class="keyrow" style="color:#8A94A3">
+          <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
+          <div class="kt"><b>Equal spacing</b> — every hop is drawn the same distance, so the lane that ends lower is the one that takes longer.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+const SVGNS='http://www.w3.org/2000/svg';
+const stage=document.getElementById('stage'), svg=document.getElementById('svg');
+const defs=document.getElementById('defs'), pathsG=document.getElementById('paths');
+const C={orders:'#4C63D8', inv:'#0F9E8E', risk:'#C2255C', grey:'#9AA4B2'};
+const BOARD_W=2140;
+
+/* arrowheads */
+for(const [k,hex] of Object.entries(C)){
+  const m=document.createElementNS(SVGNS,'marker');
+  m.setAttribute('id','ar-'+k);m.setAttribute('viewBox','0 0 10 10');m.setAttribute('refX','8');m.setAttribute('refY','5');
+  m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');m.setAttribute('orient','auto-start-reverse');
+  const p=document.createElementNS(SVGNS,'path');p.setAttribute('d','M0 1 L9 5 L0 9 z');p.setAttribute('fill',hex);
+  m.appendChild(p);defs.appendChild(m);
+}
+
+/* ---------- 1. lay the board out, then size it to its contents ---------- */
+const el=id=>document.getElementById(id);
+const bottomOf=id=>{const e=el(id);return e.offsetTop+e.offsetHeight;};
+
+/* stack the two source panels, then centre the recommendation between them */
+el('pClient').style.top = (bottomOf('pProp') + 46) + 'px';
+const colBottom = bottomOf('pClient');
+el('pRec').style.top = Math.round((el('pProp').offsetTop + colBottom)/2 - el('pRec').offsetHeight/2) + 'px';
+
+/* the flow frame ends level with the panel column */
+/* the key card sits at the foot of the right column, bottom-aligned with the others */
+el('pKey').style.top = Math.max(bottomOf('pRec') + 46, colBottom - el('pKey').offsetHeight) + 'px';
+
+const frameTop = 70, frameBottom = Math.max(colBottom, bottomOf('pKey'));
+el('frame').style.height = (frameBottom - frameTop) + 'px';
+el('divider').style.height = (frameBottom - 150 - 24) + 'px';
+
+const BOARD_H = frameBottom + 60;
+stage.style.height = BOARD_H + 'px';
+svg.setAttribute('viewBox', '0 0 '+BOARD_W+' '+BOARD_H);
+
+/* ---------- 2. geometry helpers ---------- */
+/* .ctr elements are positioned by their centre; everything else by top-left */
+function box(id){
+  const e=el(id), w=e.offsetWidth, h=e.offsetHeight, ctr=e.classList.contains('ctr');
+  const cx = ctr ? e.offsetLeft : e.offsetLeft + w/2;
+  const cy = ctr ? e.offsetTop  : e.offsetTop  + h/2;
+  return {cx,cy,w,h,l:cx-w/2,r:cx+w/2,t:cy-h/2,b:cy+h/2};
+}
+const keyFor=hex=>Object.keys(C).find(k=>C[k]===hex);
+function draw(d,hex,{dash,width,head=true,opacity=.55}={}){
+  const p=document.createElementNS(SVGNS,'path');
+  p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',hex);
+  p.setAttribute('stroke-width',width||2.2);p.setAttribute('stroke-linecap','round');
+  p.setAttribute('stroke-opacity',opacity);
+  if(dash)p.setAttribute('stroke-dasharray','7 5');
+  if(head)p.setAttribute('marker-end','url(#ar-'+keyFor(hex)+')');
+  pathsG.appendChild(p);
+}
+/* orders: straight down, bottom of A to top of B */
+function down(aId,bId){
+  const a=box(aId),b=box(bId);
+  draw('M '+a.cx+' '+(a.b+5)+' V '+(b.t-7), C.orders);
+}
+/* inventory: elbow back up the left-hand side */
+function upLeft(aId,bId,x){
+  const a=box(aId),b=box(bId),r=12,sy=a.cy,ty=b.cy;
+  draw('M '+(a.l-5)+' '+sy+' H '+(x+r)+' Q '+x+' '+sy+' '+x+' '+(sy-r)+
+       ' V '+(ty+r)+' Q '+x+' '+ty+' '+(x+r)+' '+ty+' H '+(b.l-7), C.inv, {dash:true});
+}
+/* pink tether from the cloud to the shape it annotates */
+function tether(fromId,toId){
+  const a=box(fromId),b=box(toId);
+  const sx=a.cx-26, sy=a.b-6, tx=b.r+5, ty=b.t+18;
+  draw('M '+sx+' '+sy+' C '+(sx-52)+' '+(sy+34)+' '+(tx+78)+' '+(ty-36)+' '+tx+' '+ty,
+       C.risk, {width:1.6, opacity:.8});
+}
+/* curved connector from a panel's right edge into the recommendation */
+function curveInto(fromId,toId){
+  const a=box(fromId),b=box(toId);
+  const sx=a.r+3, sy=a.cy, tx=b.l-9, ty=b.cy, mx=(sx+tx)/2;
+  draw('M '+sx+' '+sy+' C '+(mx+34)+' '+sy+' '+(mx-34)+' '+ty+' '+tx+' '+ty, C.grey, {width:1.8});
+}
+
+/* ---------- 3. draw ---------- */
+down('a1','a2'); down('a2','a3'); down('a3','a4');
+upLeft('a4','a2',145);
+
+down('b1','b2'); down('b2','b3'); down('b3','b4'); down('b4','b5'); down('b5','b6');
+upLeft('b6','b4',650);
+upLeft('b4','b2',650);
+
+tether('cloud','b4');
+curveInto('pProp','pRec');
+curveInto('pClient','pRec');
+
+/* the marker line: both lanes are drawn at the same distance per hop, so this
+   is the moment the proposed flow is done and the client flow is still mid-relay */
+(function(){
+  const y = box('a4').b + 44;
+  el('markTag').style.top = y + 'px';
+  const t = el('markTag'), half = t.offsetWidth/2 + 12, cx = t.offsetLeft;
+  draw('M 120 '+y+' H '+(cx-half), C.grey, {width:1.4, dash:true, head:false, opacity:.5});
+  draw('M '+(cx+half)+' '+y+' H 1090', C.grey, {width:1.4, dash:true, head:false, opacity:.5});
+  /* park the lane-A note in the middle of the space lane A doesn't need */
+  el('laneNote').style.top = Math.round((y + frameBottom)/2) + 'px';
+})();
+
+/* park the comment pin on the corner of the Shopify relay */
+(function(){const b=box('b4'), p=el('pin');
+  p.style.left=(b.l-2)+'px'; p.style.top=(b.t-2)+'px';})();
+
+/* ---------- 4. tooltips ---------- */
+const tip=document.getElementById('tip');
+function swatch(t){
+  if(t.classList.contains('blue'))return '#0A6ED1';
+  if(t.classList.contains('risk')||t.id==='cloud')return '#C2255C';
+  if(t.id==='pin')return '#2D9BF0';
+  return '#2A3442';
+}
+function showTip(e){
+  const t=e.currentTarget; if(!t.dataset.tip)return;
+  tip.innerHTML='<div class="th"><span class="sw" style="background:'+swatch(t)+'"></span>'+t.dataset.tipTitle+'</div>'+t.dataset.tip;
+  tip.classList.add('show');
+  if(e.clientX!==undefined) moveTip(e);
+  else {const r=t.getBoundingClientRect(); moveTip({clientX:r.right,clientY:r.bottom});}
+}
+function moveTip(e){
+  const pad=16,w=tip.offsetWidth,h=tip.offsetHeight;
+  let x=e.clientX+pad,y=e.clientY+pad;
+  if(x+w>innerWidth-8)x=e.clientX-w-pad;
+  if(y+h>innerHeight-8)y=e.clientY-h-pad;
+  tip.style.left=Math.max(8,x)+'px'; tip.style.top=Math.max(8,y)+'px';
+}
+function hideTip(){tip.classList.remove('show');}
+document.querySelectorAll('[data-tip]').forEach(e=>{
+  e.addEventListener('mouseenter',showTip);
+  e.addEventListener('mousemove',moveTip);
+  e.addEventListener('mouseleave',hideTip);
+  if(e.classList.contains('mn')||e.classList.contains('cloud')){
+    e.tabIndex=0; e.addEventListener('focus',showTip); e.addEventListener('blur',hideTip);
+  }
+});
+
+/* ---------- 5. zoom: fit the whole board, or read it at full size and pan ---------- */
+const wrap=document.getElementById('stageWrap');
+const zFit=el('zFit'), z100=el('z100');
+let mode='fit';
+function apply(){
+  const fitScale=Math.min(1, wrap.clientWidth/BOARD_W);
+  const s = mode==='fit' ? fitScale : 1;
+  stage.style.transform='scale('+s+')';
+  wrap.style.height=(BOARD_H*s)+'px';
+  wrap.style.overflowX = (mode==='full' && fitScale<1) ? 'auto' : 'hidden';
+  zFit.setAttribute('aria-pressed', String(mode==='fit'));
+  z100.setAttribute('aria-pressed', String(mode==='full'));
+}
+zFit.addEventListener('click',()=>{mode='fit';apply();wrap.scrollLeft=0;});
+z100.addEventListener('click',()=>{mode='full';apply();});
+new ResizeObserver(apply).observe(wrap);
+apply();
+</script>
