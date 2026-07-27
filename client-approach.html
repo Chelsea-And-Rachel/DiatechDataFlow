@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Client-Requested Approach — Diatech</title>
+<title>Initial Concept — Diatech</title>
 <style>
   :root{
     --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
@@ -123,10 +123,9 @@
   .flownav a.active{background:#fff;color:#1C2430;box-shadow:0 1px 3px rgba(20,30,50,.14)}
 </style>
 <nav class="flownav" id="flownav">
-  <a href="index.html" data-f="index.html">Data Flow</a>
-  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Proposed Architecture</a>
-  <a href="client-approach.html" data-f="client-approach.html">Client-Requested</a>
-  <a href="comparison.html" data-f="comparison.html">Comparison</a>
+  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Our Proposal</a>
+  <a href="client-approach.html" data-f="client-approach.html">Initial Concept</a>
+  <a href="miro.html" data-f="miro.html">Side by Side</a>
 </nav>
 <script>
   (function(){
@@ -138,10 +137,10 @@
   })();
 </script>
 <!-- ===== end flow nav ===== -->
-  <p class="eyebrow">Diatech · Client-Requested Approach</p>
+  <p class="eyebrow">Diatech · Initial Concept</p>
   <h1>Routing every channel through Shopify</h1>
-  <p class="sub">Why this adds risk</p>
-  <p class="cap">In this version, Net32, Dentira, ZenOne and other platforms all route <b>through Shopify</b> to reach SAP. Each channel <b>still needs its own connector</b> — Net32 via <b>Commercium</b>, one per platform alongside it — and then <b>a further connector</b>, APPSeConnect, to carry everything from Shopify into SAP. Every order and every inventory update takes <b>an extra hop</b> — and Shopify becomes a relay for orders it wasn't built to handle.</p>
+  <p class="sub">The starting point — and what it costs in practice</p>
+  <p class="cap">This is the shape we started from together: Net32, Dentira, ZenOne and other platforms all reach SAP <b>through Shopify</b>. Mapped out, each channel <b>still needs its own connector</b> — Net32 via <b>Commercium</b>, one per platform alongside it — plus <b>a further connector</b>, APPSeConnect, to carry everything from Shopify into SAP. So every order and every inventory update takes <b>an extra hop</b>, with Shopify acting as a relay for order types it wasn't designed around. Worth walking through before we settle the final shape.</p>
   <p class="hint"><span class="hoverhint">✦ hover any box or ⚠ for detail</span></p>
 
   <div class="stage-wrap" id="stageWrap">
@@ -165,11 +164,11 @@ const IC={
 };
 const CH={
   net32:{x:200,y:210,w:250,h:92,name:'Net32',role:'Dental-supply marketplace — customers',color:'var(--net32)',ic:IC.net32,stock:'SKU-123 · 100 · lagging',lag:1,
-    tip:'Customers order here. But Net32 doesn\u2019t list or check out on Shopify \u2014 so pushing its orders through Shopify is a forced data pass-through, not a real integration.'},
+    tip:'Customers order here. Net32 doesn\u2019t list or check out on Shopify, so its orders would move through Shopify purely as data in transit rather than as a native integration.'},
   Dentira:{x:500,y:210,w:250,h:92,name:'Dentira',role:'GPO platform (with DSOs) — customers',color:'var(--Dentira)',ic:IC.Dentira,stock:'SKU-123 · 100 · lagging',lag:1,
     tip:'A GPO platform (its DSOs order through it). Its GPO/contract terms have no native equivalent in Shopify\u2019s order model.'},
   zenone:{x:800,y:210,w:250,h:92,name:'ZenOne',role:'Sales channel — customers',color:'var(--zenone)',ic:IC.zenone,stock:'SKU-123 · 100 · lagging',lag:1,
-    tip:'Another sales channel that here has to reach SAP via Shopify — a platform it has nothing to do with. Its orders and stock updates inherit Shopify’s relay delay.'},
+    tip:'Another sales channel — in this shape its route to SAP runs via Shopify, a platform it isn’t otherwise connected to, so its orders and stock updates inherit the relay delay.'},
   other:{x:1100,y:210,w:250,h:92,name:'Other Platforms',role:'More channels — customers',color:'var(--other)',ic:IC.other,stock:'SKU-123 · 100 · lagging',lag:1,
     tip:'Additional platforms, each still needing its own connector \u2014 routed through Shopify rather than straight to SAP.'}
 };
@@ -178,9 +177,9 @@ const DSO={
   dso2:{x:500,y:80,w:70,h:44,name:'DSO'},
   dso3:{x:595,y:80,w:70,h:44,name:'DSO'}
 };
-const DSO_TIP='A Dental Service Organization. It places its orders through the Dentira GPO platform \u2014 which, in this approach, then routes through Shopify before reaching SAP.';
+const DSO_TIP='A Dental Service Organization. It places its orders through the Dentira GPO platform \u2014 which, in this concept, then routes through Shopify before reaching SAP.';
 const SHOP={x:650,y:432,w:340,h:120,
-  tip:'In the client\u2019s approach Shopify becomes the middle layer for every channel. But it was built as a DTC storefront \u2014 it has no native concept of B2B contract pricing, GPO terms or PO-style orders, and every order and inventory update now passes through it, adding a hop and mixing B2B volume into storefront analytics.'};
+  tip:'In this concept Shopify becomes the middle layer for every channel. It was built as a DTC storefront, so it has no native concept of B2B contract pricing, GPO terms or PO-style orders \u2014 and every order and inventory update now passes through it, adding a hop and mixing B2B volume into storefront analytics.'};
 const SAP={x:650,y:650,w:1040,h:132,
   tip:'The true single source of truth: real stock here is 90. Because updates must travel back out through Shopify before reaching the channels, the channels keep showing 100 until the relay catches up \u2014 the overselling window.'};
 
@@ -216,7 +215,7 @@ for(const [id,d] of Object.entries(DSO)){
   stage.appendChild(el);
 }
 for(const [id,n] of Object.entries(CH)) chNode(id,n,false);
-chNode('shopify',{...SHOP,name:'Shopify',role:'DTC storefront — now relaying B2B & marketplace orders it wasn\u2019t built for',color:'var(--shopify)',ic:IC.shopify,stock:'SKU-123 · 100 · lagging',lag:1},true);
+chNode('shopify',{...SHOP,name:'Shopify',role:'DTC storefront — here also relaying B2B & marketplace orders',color:'var(--shopify)',ic:IC.shopify,stock:'SKU-123 · 100 · lagging',lag:1},true);
 
 const sapEl=document.createElement('div');sapEl.className='sap';
 sapEl.style.left=SAP.x+'px';sapEl.style.top=SAP.y+'px';sapEl.style.width=SAP.w+'px';
@@ -264,13 +263,13 @@ for(const k in DSO){ seg(DSO[k],CH.Dentira,'orders','down',6); }
 // and a second connector (APPSeConnect) carries everything on to SAP
 const CONNS=[
   {x:380,y:299,name:'Commercium',
-   tip:'The connector app between Net32 and Shopify. In this approach every Net32 order and every stock update has to pass through it into Shopify first \u2014 then a second connector carries it on to SAP.'},
+   tip:'The connector app between Net32 and Shopify. In this shape every Net32 order and every stock update passes through it into Shopify first \u2014 then a second connector carries it on to SAP.'},
   {x:560,y:299,
    tip:'Dentira still needs its own connector \u2014 but it now delivers into Shopify instead of SAP, and Shopify has no native equivalent for Dentira\u2019s GPO/contract terms. Every order then makes a second hop through APPSeConnect to reach SAP.'},
   {x:740,y:299,
-   tip:'ZenOne still needs its own connector. Pointing it at Shopify rather than SAP saves no integration work \u2014 it just means every ZenOne order and stock update inherits the extra relay hop.'},
+   tip:'ZenOne still needs its own connector either way. Pointing it at Shopify rather than SAP keeps the same build effort \u2014 it just means every ZenOne order and stock update inherits the extra relay hop.'},
   {x:920,y:299,
-   tip:'Every additional platform still needs its own connector too. Routing them through Shopify doesn\u2019t remove a single integration \u2014 it only adds a hop in front of SAP.'},
+   tip:'Every additional platform still needs its own connector too. Routing them through Shopify keeps the integration count the same \u2014 and adds a hop in front of SAP.'},
   {x:800,y:538,name:'APPSeConnect',
    tip:'The connector app between Shopify and SAP. Here it carries not only Shopify\u2019s own orders but every other channel\u2019s too \u2014 so all traffic is funnelled through this one hop.'}
 ];
@@ -291,8 +290,8 @@ tag(330,545,'\u26A0 Hop 1 + Hop 2 \u2014 two hops instead of one',null,true);
 // watch-outs
 const WATCH=[
   {x:245,y:812,w:340,n:'1',t:'<b>Extra hop.</b> Every order &amp; inventory update passes through Shopify \u2014 added latency and a wider overselling window.'},
-  {x:650,y:812,w:340,n:'2',t:'<b>Wrong tool.</b> Shopify has no native B2B contract pricing, GPO terms or PO-style orders; B2B volume also pollutes storefront analytics.'},
-  {x:1055,y:812,w:340,n:'3',t:'<b>No work saved.</b> Still one connector per channel <i>plus</i> APPSeConnect for Shopify\u2192SAP \u2014 same integrations, just an extra hop.'}
+  {x:650,y:812,w:340,n:'2',t:'<b>Built for a different job.</b> Shopify has no native B2B contract pricing, GPO terms or PO-style orders, and B2B volume lands in storefront analytics.'},
+  {x:1055,y:812,w:340,n:'3',t:'<b>Same connector count.</b> Still one per channel <i>plus</i> APPSeConnect for Shopify\u2192SAP \u2014 the same integrations, with one more hop.'}
 ];
 for(const w of WATCH){const d=document.createElement('div');d.className='watch';d.style.left=w.x+'px';d.style.top=w.y+'px';d.style.width=w.w+'px';
   d.innerHTML='<div class="b">!</div><div class="wt">'+w.t+'</div>';stage.appendChild(d);}

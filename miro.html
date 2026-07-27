@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Approach Comparison — Diatech</title>
+<title>Side by Side — Diatech</title>
 <style>
   :root{
     --ink:#1C2430; --muted:#6C7686; --line:#E4E8EE; --panel:#fff;
@@ -151,10 +151,9 @@
   .flownav a.active{background:#fff;color:#1C2430;box-shadow:0 1px 3px rgba(20,30,50,.14)}
 </style>
 <nav class="flownav" id="flownav">
-  <a href="index.html" data-f="index.html">Data Flow</a>
-  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Proposed Architecture</a>
-  <a href="client-approach.html" data-f="client-approach.html">Client-Requested</a>
-  <a href="comparison.html" data-f="comparison.html">Comparison</a>
+  <a href="proposed-architecture.html" data-f="proposed-architecture.html">Our Proposal</a>
+  <a href="client-approach.html" data-f="client-approach.html">Initial Concept</a>
+  <a href="miro.html" data-f="miro.html">Side by Side</a>
 </nav>
 <script>
   (function(){
@@ -167,9 +166,9 @@
 </script>
 <!-- ===== end flow nav ===== -->
 
-  <p class="eyebrow">Diatech · Approach Comparison</p>
+  <p class="eyebrow">Diatech · Side by Side</p>
   <h1>Direct to SAP, or everything through Shopify?</h1>
-  <p class="cap">Both approaches need <b>the same five connectors</b>. What changes is what sits between a channel and SAP — and what happens when that thing is down. The two flows are drawn side by side at <b>the same distance per hop</b>, so where each lane ends is where that approach actually lands.</p>
+  <p class="cap">The concept we started from and the shape we proposed, drawn next to each other. Both need <b>the same five connectors</b> — what changes is what sits between a channel and SAP, and what happens when that thing is down. Each lane is drawn at <b>the same distance per hop</b>, so where a lane ends is where that option actually lands.</p>
   <p class="hint">
     <span class="hoverhint">✦ hover any shape for detail</span>
     <span class="zoom" role="group" aria-label="Board zoom">
@@ -189,11 +188,11 @@
       <div class="divider" id="divider" style="left:585px;top:150px;height:1300px"></div>
 
       <div class="lane-t" style="left:315px;top:150px">
-        <div class="n">Proposed</div>
+        <div class="n">Our proposal</div>
         <div class="s">Channel → connector → SAP</div>
       </div>
       <div class="lane-t" style="left:835px;top:150px">
-        <div class="n">Client-requested</div>
+        <div class="n">Initial concept</div>
         <div class="s">Channel → connector → Shopify → connector → SAP</div>
       </div>
 
@@ -225,7 +224,7 @@
       <!-- ---- lane B : 6 stops, the same 170px apart ---- -->
       <div class="mn oval ctr" id="b1" style="left:835px;top:290px;width:250px;height:68px"
         data-tip-title="Customer order"
-        data-tip="The same starting point as the proposed flow. A customer checks out on a channel.">
+        data-tip="The same starting point as our proposal. A customer checks out on a channel.">
         <div>A customer orders on a channel</div>
       </div>
 
@@ -237,19 +236,19 @@
 
       <div class="mn ctr" id="b3" style="left:835px;top:630px;width:248px;height:64px"
         data-tip-title="Still one connector per channel"
-        data-tip="Nothing is saved here. Every channel still needs its own connector — it just points at Shopify instead of SAP. The same integrations get built, mapped and maintained.">
+        data-tip="The connector count is unchanged here. Every channel still needs its own — it just points at Shopify instead of SAP, and the same integrations get built, mapped and maintained.">
         <div>Each channel's own connector<span class="sm">still one each — now pointing at Shopify</span></div>
       </div>
 
       <div class="mn risk ctr" id="b4" style="left:835px;top:800px;width:252px;height:80px"
         data-tip-title="Shopify as relay"
         data-tip="Shopify was built as a DTC storefront. Here it carries marketplace and GPO traffic it has no native model for — no contract pricing, no GPO terms, no PO-style orders — and every message in both directions has to cross it.">
-        <div><b>Shopify — relay</b><span class="sm">carrying orders it wasn't built for</span></div>
+        <div><b>Shopify — relay</b><span class="sm">carrying order types it has no native model for</span></div>
       </div>
 
       <div class="mn ctr" id="b5" style="left:835px;top:970px;width:210px;height:58px"
         data-tip-title="APPSeConnect"
-        data-tip="The sixth integration. In the proposed flow this is simply Shopify's own connector; here it also has to carry every other channel's traffic, which makes it the narrowest point in the whole system.">
+        data-tip="The sixth integration. In our proposal this is simply Shopify's own connector; here it also has to carry every other channel's traffic, which makes it the narrowest point in the whole system.">
         <div><b>APPSeConnect</b></div>
       </div>
 
@@ -267,11 +266,11 @@
 
       <div class="pin" id="pin"
         data-tip-title="Board comment"
-        data-tip="Worth saying out loud: routing through Shopify does not retire a single connector. It adds one. The five channel connectors get built either way.">1</div>
+        data-tip="Worth keeping in view: routing through Shopify doesn't retire any of the five channel connectors — those get built either way — it adds a sixth on top.">1</div>
 
       <!-- ---- the marker line: where the proposed flow has already finished ---- -->
       <div class="ftag mark" id="markTag" style="left:575px;top:920px">
-        By here the proposed flow has landed in SAP — the client flow is only at Shopify
+        By here our proposal has landed in SAP — the initial concept is only at Shopify
       </div>
 
       <div class="ftag good" id="tagA" style="left:315px;top:940px">1 hop each way</div>
@@ -283,9 +282,9 @@
         <span>The order is already in SAP, and the new stock number is already on its way back out to every channel.</span>
       </div>
 
-      <!-- ================= PANEL: PROPOSED ================= -->
+      <!-- ================= PANEL: OUR PROPOSAL ================= -->
       <div class="panel" id="pProp" style="left:1200px;top:70px;width:430px">
-        <h3>Proposed architecture</h3>
+        <h3>Our proposal</h3>
         <p class="psub">Every channel connects directly to SAP</p>
         <div class="rule"></div>
 
@@ -334,9 +333,9 @@
         </div></div>
       </div>
 
-      <!-- ================= PANEL: CLIENT-REQUESTED ================= -->
+      <!-- ================= PANEL: INITIAL CONCEPT ================= -->
       <div class="panel" id="pClient" style="left:1200px;top:820px;width:430px">
-        <h3>Client-requested approach</h3>
+        <h3>Initial concept</h3>
         <p class="psub">Every channel routes through Shopify to reach SAP</p>
         <div class="rule"></div>
 
@@ -365,7 +364,7 @@
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
-          <div class="t">No integrations saved</div>
+          <div class="t">One extra integration</div>
           <div class="d">Every channel still needs its own connector; they just point at Shopify. Add APPSeConnect and it is six integrations, not five.</div>
         </div></div>
 
@@ -375,12 +374,12 @@
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
-          <div class="t">The wrong data model</div>
-          <div class="d">Shopify has no native B2B contract pricing, GPO terms or PO-style orders, so Dentira's terms must be forced into a DTC order object.</div>
+          <div class="t">A data model that doesn't fit</div>
+          <div class="d">Shopify has no native B2B contract pricing, GPO terms or PO-style orders, so Dentira's terms have to be mapped into a DTC order object.</div>
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
-          <div class="t">Storefront reporting stops being true</div>
+          <div class="t">Storefront reporting drifts</div>
           <div class="d">Marketplace and GPO volume lands in Shopify's own numbers, and consumes order volume and API budget that was never a Shopify sale.</div>
         </div></div>
       </div>
@@ -391,7 +390,7 @@
         <p class="psub">Same five connectors — here is what actually differs</p>
         <div class="rule"></div>
 
-        <div class="row hd"><div>Criterion</div><div style="text-align:center">Proposed</div><div style="text-align:center">Client</div></div>
+        <div class="row hd"><div>Criterion</div><div style="text-align:center">Proposal</div><div style="text-align:center">Initial</div></div>
         <div class="row"><div class="k">Hops per order &amp; per stock update</div><div class="v win">1</div><div class="v lose">2</div></div>
         <div class="row"><div class="k">Integrations to build &amp; maintain</div><div class="v win">5</div><div class="v lose">6</div></div>
         <div class="row"><div class="k">Channels lost to one outage</div><div class="v win">1</div><div class="v lose">All</div></div>
@@ -408,23 +407,23 @@
         <div class="rule"></div>
 
         <div class="item"><div>
-          <div class="t">The verdict</div>
-          <div class="d">Direct-to-SAP costs the same number of connectors and removes a hop from every order and every stock update. Routing through Shopify adds a sixth integration and a shared point of failure without retiring a single one.</div>
+          <div class="t">Where we landed</div>
+          <div class="d">Direct-to-SAP costs the same number of connectors and removes a hop from every order and every stock update. Routing through Shopify adds a sixth integration and a shared point of failure without retiring any of the other five.</div>
         </div></div>
 
         <div class="item"><div>
-          <div class="t">Where the client is right</div>
-          <div class="d">Wanting one place to watch orders, and one interface to certify against SAP, are both real needs. The relay is the wrong way to meet them.</div>
+          <div class="t">What the initial concept gets right</div>
+          <div class="d">One place to watch orders, and one interface to certify against SAP, are both real needs — and they stay on the table. It is the relay that carries the cost, not the goal behind it.</div>
         </div></div>
 
         <div class="item"><div>
-          <div class="t">How to meet it instead</div>
+          <div class="t">How we'd meet those needs</div>
           <div class="d">Keep Shopify as a channel and put the single console in a connector dashboard reading from SAP — one view of all channel traffic, no extra hop.</div>
         </div></div>
 
         <div class="item"><div>
-          <div class="t">If Shopify must be the hub</div>
-          <div class="d">Then scope it honestly: budget for the sixth integration, a custom mapping for GPO and contract orders, and a reconciliation process that checks both hops.</div>
+          <div class="t">If Shopify is still the preferred hub</div>
+          <div class="d">Then we scope it openly: budget for the sixth integration, a custom mapping for GPO and contract orders, and a reconciliation process that checks both hops.</div>
         </div></div>
       </div>
 
@@ -448,7 +447,7 @@
         </div>
         <div class="keyrow" style="color:#C2255C">
           <div class="sw"><div class="bx"></div></div>
-          <div class="kt"><b>Pink outline</b> — where this approach adds risk, with the annotation attached to it.</div>
+          <div class="kt"><b>Pink outline</b> — where an option adds risk, with the annotation attached to it.</div>
         </div>
         <div class="keyrow" style="color:#8A94A3">
           <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
@@ -555,7 +554,7 @@ curveInto('pProp','pRec');
 curveInto('pClient','pRec');
 
 /* the marker line: both lanes are drawn at the same distance per hop, so this
-   is the moment the proposed flow is done and the client flow is still mid-relay */
+   is the moment our proposal is done and the initial concept is still mid-relay */
 (function(){
   const y = box('a4').b + 44;
   el('markTag').style.top = y + 'px';
