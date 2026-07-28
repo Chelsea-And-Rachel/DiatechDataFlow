@@ -139,6 +139,8 @@
   .score .k{line-height:1.3}
   .score .v{text-align:center;font-weight:800;font-size:12px}
   .score .v.win{color:var(--pro)} .score .v.lose{color:var(--risk)} .score .v.tie{color:var(--muted)}
+  .score .foot{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);
+    font-size:10.5px;font-style:italic;color:var(--muted);line-height:1.5}
   .callout{margin-top:18px;background:var(--sap);color:#fff;text-align:center;
     padding:13px 14px;font-size:12px;font-weight:650;line-height:1.4}
 
@@ -174,7 +176,7 @@
 
   <p class="eyebrow">Diatech · Side by Side</p>
   <h1>Direct to SAP, or everything through Shopify?</h1>
-  <p class="cap">The concept we started from and the shape we proposed, drawn next to each other. Both need <b>the same five connectors</b> — what changes is what sits between a channel and SAP, and what happens when that thing is down. Each lane is drawn at <b>the same distance per hop</b>, so where a lane ends is where that option actually lands.</p>
+  <p class="cap">The concept we started from and the shape we proposed, drawn next to each other. Both need <b>the same five connectors</b> — one for each platform we know of today, and any platform added later adds one to both — so what changes is what sits between a channel and SAP, and what happens when that thing is down. Each lane is drawn at <b>the same distance per hop</b>, so where a lane ends is where that option actually lands.</p>
   <p class="hint">
     <span class="hoverhint">✦ every note is printed beside its shape</span>
     <span class="zoom" role="group" aria-label="Board zoom">
@@ -215,7 +217,7 @@
       </div>
       <div class="note l ctr" id="nA2" style="left:190px;top:460px">
         <div class="nt">Five channels, side by side</div>
-        <div class="nd">Shopify is one channel among five here — a place customers buy, not a hub the other four have to pass through.</div>
+        <div class="nd">The five platforms we know of today. Shopify is one channel among them here — a place customers buy, not a hub the other four have to pass through.</div>
       </div>
 
       <div class="mn ctr" id="a3" style="left:480px;top:630px;width:230px;height:62px">
@@ -272,7 +274,7 @@
       </div>
       <div class="note r ctr" id="nB5" style="left:1230px;top:970px">
         <div class="nt">The one shared trunk</div>
-        <div class="nd">The same connector as in our proposal — but doing a different job. Instead of serving Shopify alone it carries all five channels' traffic, which makes it the narrowest point in the system.</div>
+        <div class="nd">The same connector as in our proposal — but doing a different job. Instead of serving Shopify alone it carries traffic from all five of today's known channels, which makes it the narrowest point in the system.</div>
       </div>
 
       <div class="mn blue ctr" id="b6" style="left:930px;top:1140px;width:252px;height:76px">
@@ -300,7 +302,7 @@
       <!-- ---- board comment, printed instead of pinned ---- -->
       <div class="sticky ctr" id="sticky" style="left:480px;top:1290px">
         <div class="st">Board note</div>
-        <div class="sb">Both shapes cost five connectors — routing through Shopify doesn't save one. Four of them just stop at Shopify instead of SAP, and everything then funnels through the fifth.</div>
+        <div class="sb">Both shapes cost five connectors — one per platform we know of today — and routing through Shopify doesn't save one. Four of them just stop at Shopify instead of SAP, and everything then funnels through the fifth.</div>
       </div>
 
       <!-- ================= PANEL: OUR PROPOSAL ================= -->
@@ -333,7 +335,7 @@
 
         <div class="item p"><div class="mk">+</div><div>
           <div class="t">No connector does double duty</div>
-          <div class="d">Shopify is one of the five channels, not a hub. Both shapes cost five connectors — here each one serves a single channel rather than one of them carrying the other four.</div>
+          <div class="d">Shopify is one of the five channels, not a hub. Both shapes cost the same five connectors — one per platform known today — but here each serves a single channel rather than one of them carrying the other four.</div>
         </div></div>
 
         <div class="item p"><div class="mk">+</div><div>
@@ -343,7 +345,7 @@
 
         <div class="item p"><div class="mk">+</div><div>
           <div class="t">Load spreads across five paths</div>
-          <div class="d">Traffic reaches SAP through five independent connectors, so peak volume on one channel never queues behind another's — and each can be tuned or rate-limited on its own.</div>
+          <div class="d">Traffic reaches SAP through five independent connectors, one for each platform known today, so peak volume on one channel never queues behind another's — and each can be tuned or rate-limited on its own.</div>
         </div></div>
 
         <div class="item p"><div class="mk">+</div><div>
@@ -406,7 +408,7 @@
       <!-- ================= SCORECARD ================= -->
       <div class="panel score" id="pScore" style="left:1910px;top:70px;width:390px">
         <h3>Decision scorecard</h3>
-        <p class="psub">Same five connectors — here is what actually differs</p>
+        <p class="psub">Same five connectors on today's known platforms — here is what actually differs</p>
         <div class="rule"></div>
 
         <div class="row hd"><div>Criterion</div><div style="text-align:center">Proposal</div><div style="text-align:center">Initial</div></div>
@@ -416,6 +418,8 @@
         <div class="row"><div class="k">Channels lost to one outage</div><div class="v win">1</div><div class="v lose">All</div></div>
         <div class="row"><div class="k">Native B2B / GPO order model</div><div class="v win">Yes</div><div class="v lose">No</div></div>
         <div class="row"><div class="k">Storefront analytics stay clean</div><div class="v win">Yes</div><div class="v lose">No</div></div>
+
+        <p class="foot">Five is the count for the platforms we know of today. A platform added later adds one connector to either option, so the tie holds.</p>
 
         <div class="callout">Same connector count. One less hop. SAP stays the source of truth.</div>
       </div>
@@ -428,7 +432,7 @@
 
         <div class="item"><div>
           <div class="t">Where we landed</div>
-          <div class="d">Both shapes cost five connectors, so the choice isn't about how many get built — it's about how they're wired. Direct-to-SAP removes a hop and a translation from every order and every stock update; the relay saves neither, and puts all five channels behind one path.</div>
+          <div class="d">Both shapes cost the same five connectors — one per platform known today — so the choice isn't about how many get built — it's about how they're wired. Direct-to-SAP removes a hop and a translation from every order and every stock update; the relay saves neither, and puts all five channels behind one path.</div>
         </div></div>
 
         <div class="item"><div>
