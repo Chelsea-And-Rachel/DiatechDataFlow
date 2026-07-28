@@ -181,7 +181,6 @@
       <button type="button" id="zFit" aria-pressed="true">Fit</button>
       <button type="button" id="z100" aria-pressed="false">100%</button>
     </span>
-    <span>Nothing is hidden behind a hover — the whole board reads from a single screenshot.</span>
   </p>
 
   <div class="stage-wrap" id="stageWrap">
@@ -465,9 +464,9 @@
           <div class="sw"><div class="bx"></div></div>
           <div class="kt"><b>Pink outline</b> — where an option adds risk, with its note in the same colour.</div>
         </div>
-        <div class="keyrow" style="color:#9AA4B2">
+        <div class="keyrow" style="color:#7E8A9C">
           <div class="sw"><div class="ln d"></div></div>
-          <div class="kt"><b>Faint dotted leader</b> — joins each shape to its note in the margin. Every note is printed, none is hidden.</div>
+          <div class="kt"><b>Dotted leader</b> — joins each shape to its note in the margin. Every note is printed, none is hidden.</div>
         </div>
         <div class="keyrow" style="color:#8A94A3">
           <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
@@ -565,11 +564,12 @@ function upRight(aId,bId,x){
   draw('M '+(a.r+5)+' '+sy+' H '+(x-r)+' Q '+x+' '+sy+' '+x+' '+(sy-r)+
        ' V '+(ty+r)+' Q '+x+' '+ty+' '+(x-r)+' '+ty+' H '+(b.r+7), C.inv, {dash:true});
 }
-/* faint dotted leader joining a margin note to the shape it belongs to */
+/* dotted leader joining a margin note to the shape it belongs to — it has to
+   survive being scaled down into a screenshot, so it is drawn solidly */
 function leader(noteId,shapeId){
   const n=box(noteId), s=box(shapeId), y=s.cy;
   const [x1,x2] = n.cx < s.cx ? [n.r+5, s.l-5] : [n.l-5, s.r+5];
-  draw('M '+x1+' '+y+' H '+x2, C.grey, {width:1.2, dash:'2 5', head:false, opacity:.55});
+  draw('M '+x1+' '+y+' H '+x2, '#7E8A9C', {width:1.8, dash:'3 4', head:false, opacity:1});
 }
 /* curved connector from a panel's right edge into the recommendation */
 function curveInto(fromId,toId){
