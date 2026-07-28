@@ -337,21 +337,19 @@
           <div class="d">Shopify is one of the five channels, not a hub. The connector count is identical either way.</div>
         </div></div>
 
-        <div class="glabel c">Cons<span class="bar"></span></div>
-
-        <div class="item c"><div class="mk">−</div><div>
-          <div class="t">Five SAP-facing integrations</div>
-          <div class="d">Each channel is mapped and maintained on its own; there is no shared translation layer to fix things in one place.</div>
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">Each channel mapped on its own terms</div>
+          <div class="d">Every connector is built for the platform it serves, so one channel's quirks never have to be forced through a shape that suits another. Changing one leaves the other four untouched.</div>
         </div></div>
 
-        <div class="item c"><div class="mk">−</div><div>
-          <div class="t">Load lands on SAP directly</div>
-          <div class="d">Peak concurrency and API rate limits have to be handled connector by connector.</div>
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">Load spreads across five paths</div>
+          <div class="d">Traffic reaches SAP through five independent connectors, so peak volume on one channel never queues behind another's — and each can be tuned or rate-limited on its own.</div>
         </div></div>
 
-        <div class="item c"><div class="mk">−</div><div>
-          <div class="t">No single console</div>
-          <div class="d">Seeing all channel traffic in one view takes deliberate monitoring; the topology doesn't hand it to you.</div>
+        <div class="item p"><div class="mk">+</div><div>
+          <div class="t">The console stays a deliberate choice</div>
+          <div class="d">Nothing forces the single view into a storefront admin. A connector dashboard reading from SAP gives one view of all channel traffic — built to fit, and without adding a hop.</div>
         </div></div>
       </div>
 
@@ -362,11 +360,6 @@
         <div class="rule"></div>
 
         <div class="glabel p">Pros<span class="bar"></span></div>
-
-        <div class="item p"><div class="mk">+</div><div>
-          <div class="t">One familiar console</div>
-          <div class="d">Orders from every channel appear in the Shopify admin the team already works in each day.</div>
-        </div></div>
 
         <div class="item p"><div class="mk">+</div><div>
           <div class="t">One SAP-facing contract</div>
@@ -435,12 +428,12 @@
 
         <div class="item"><div>
           <div class="t">What the initial concept gets right</div>
-          <div class="d">One place to watch orders, and one interface to certify against SAP, are both real needs — and they stay on the table. It is the relay that carries the cost, not the goal behind it.</div>
+          <div class="d">One interface to certify against SAP, and one place to clean product data, are both real needs — and they stay on the table. It is the relay that carries the cost, not the goals behind it.</div>
         </div></div>
 
         <div class="item"><div>
           <div class="t">How we'd meet those needs</div>
-          <div class="d">Keep Shopify as a channel and put the single console in a connector dashboard reading from SAP — one view of all channel traffic, no extra hop.</div>
+          <div class="d">Keep Shopify as a channel, clean the catalogue at source, and put the single view in a connector dashboard reading from SAP — one place to watch every channel, no extra hop.</div>
         </div></div>
 
         <div class="item"><div>
