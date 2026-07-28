@@ -121,7 +121,14 @@
     font-size:13px; font-weight:750; color:#8A94A3; line-height:1.4;}
   .lanenote span{display:block;margin-top:6px;font-size:11.5px;font-weight:500;font-style:italic;color:#9BA4B2;line-height:1.5}
 
-  /* ---- key card ---- */
+  /* ---- key card: a full-width band above the frame, so it stays shallow ---- */
+  .panel.keywide{display:flex; align-items:flex-start; gap:30px; padding:18px 22px 20px}
+  .keywide .khead{flex:0 0 208px}
+  .keywide .khead h3{text-align:left}
+  .keywide .khead .psub{text-align:left; margin-top:5px}
+  .keywide .kgrid{flex:1; display:grid; grid-template-columns:repeat(5,1fr); gap:12px 24px}
+  .keywide .keyrow{margin-top:0}
+
   .keyrow{display:flex;gap:11px;align-items:flex-start;margin-top:11px;font-size:11.5px;line-height:1.45}
   .keyrow .sw{flex:0 0 auto;width:26px;margin-top:6px;display:grid;place-items:center}
   .keyrow .sw .ln{width:26px;height:0;border-top:2.4px solid currentColor}
@@ -210,6 +217,52 @@
 
   <div class="stage-wrap" id="stageWrap">
     <div class="stage" id="stage">
+
+      <!-- ================= KEY: full-width band above the flow ================= -->
+      <div class="panel keywide" id="pKey" style="left:40px;top:40px;width:1794px">
+        <div class="khead">
+          <h3>How to read this board</h3>
+          <p class="psub">Same shapes and same spacing in both lanes</p>
+        </div>
+        <div class="kgrid">
+          <div class="keyrow" style="color:#C68A0A">
+            <div class="sw"><div class="bx" style="background:rgba(253,182,20,.22)"></div></div>
+            <div class="kt"><b>Amber lane</b> · the recommended flow.</div>
+          </div>
+          <div class="keyrow" style="color:#BE3C36">
+            <div class="sw"><div class="bx" style="background:rgba(214,64,58,.14)"></div></div>
+            <div class="kt"><b>Red lane</b> · the flow the client proposed.</div>
+          </div>
+          <div class="keyrow" style="color:#4C63D8">
+            <div class="sw"><div class="ln"></div></div>
+            <div class="kt"><b>Solid blue, downward</b> · an order travelling toward SAP.</div>
+          </div>
+          <div class="keyrow" style="color:#0F9E8E">
+            <div class="sw"><div class="ln d"></div></div>
+            <div class="kt"><b>Dashed teal, upward</b> · the updated stock number travelling back out to the channels.</div>
+          </div>
+          <div class="keyrow" style="color:#4C63D8">
+            <div class="sw"><div class="ln t"></div></div>
+            <div class="kt"><b>Thick line</b> · a path carrying every channel at once. Thin lines carry one channel each.</div>
+          </div>
+          <div class="keyrow" style="color:#0A6ED1">
+            <div class="sw"><div class="bx"></div></div>
+            <div class="kt"><b>Blue outline</b> · SAP, the system of record.</div>
+          </div>
+          <div class="keyrow" style="color:#C2255C">
+            <div class="sw"><div class="bx" style="background:#FDECF2"></div></div>
+            <div class="kt"><b>Pink fill</b> · where the shape adds risk, with its note in the same colour.</div>
+          </div>
+          <div class="keyrow" style="color:#7E8A9C">
+            <div class="sw"><div class="ln d"></div></div>
+            <div class="kt"><b>Dotted leader</b> · joins each shape to its note in the margin. Every note is printed, none is hidden.</div>
+          </div>
+          <div class="keyrow" style="color:#8A94A3">
+            <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
+            <div class="kt"><b>Equal spacing</b> · every hop is drawn the same distance, so the lane that ends lower is the one that takes longer.</div>
+          </div>
+        </div>
+      </div>
 
       <!-- ================= FLOW FRAME + LANE WASHES (behind the arrows) ================= -->
       <div class="frame" id="frame" style="left:40px;top:70px;width:1794px;height:1400px"></div>
@@ -346,7 +399,7 @@
       </div>
 
       <!-- ================= PANEL: RECOMMENDED ================= -->
-      <div class="panel rec" id="pProp" style="left:40px;top:1600px;width:320px">
+      <div class="panel rec" id="pProp" style="left:40px;top:1600px;width:420px">
         <h3>Recommended</h3>
         <p class="psub">Every channel connects directly to SAP</p>
         <div class="rule"></div>
@@ -400,7 +453,7 @@
       </div>
 
       <!-- ================= PANEL: CLIENT PROPOSED ================= -->
-      <div class="panel cli" id="pClient" style="left:396px;top:1600px;width:320px">
+      <div class="panel cli" id="pClient" style="left:496px;top:1600px;width:420px">
         <h3>Client proposed</h3>
         <p class="psub">Every channel routes through Shopify to reach SAP</p>
         <div class="rule"></div>
@@ -454,7 +507,7 @@
       </div>
 
       <!-- ================= SCORECARD ================= -->
-      <div class="panel score" id="pScore" style="left:752px;top:1600px;width:390px">
+      <div class="panel score" id="pScore" style="left:952px;top:1600px;width:400px">
         <h3>Decision scorecard</h3>
         <p class="psub">Same five connectors on today's known platforms, here is what actually differs</p>
         <div class="rule"></div>
@@ -478,7 +531,7 @@
       </div>
 
       <!-- ================= RECOMMENDATION ================= -->
-      <div class="panel" id="pRec" style="left:1178px;top:1600px;width:330px">
+      <div class="panel" id="pRec" style="left:1388px;top:1600px;width:446px">
         <h3>Recommendation</h3>
         <p class="psub">Connect every channel directly to SAP</p>
         <div class="rule"></div>
@@ -494,50 +547,6 @@
           <div class="d">The goals behind the client proposed shape are real, and not one of them needs the relay to happen.</div>
           <div class="d">One place to watch orders becomes a connector dashboard reading live from SAP, with every channel in a single view and no extra hop. One interface to certify becomes a shared connector framework, built once and reused per channel, so SAP-side change control stays manageable across all five. Clean product data is handled at source in SAP and the PIM, so it is already right before it reaches any channel, and channel-only items never have to sit in a storefront catalogue. Shopify keeps doing what it is best at, selling as one of the five channels.</div>
         </div></div>
-      </div>
-
-      <!-- ================= KEY ================= -->
-      <div class="panel" id="pKey" style="left:1544px;top:1600px;width:290px">
-        <h3>How to read this board</h3>
-        <p class="psub">Same shapes and same spacing in both lanes</p>
-        <div class="rule"></div>
-
-        <div class="keyrow" style="color:#C68A0A">
-          <div class="sw"><div class="bx" style="background:rgba(253,182,20,.22)"></div></div>
-          <div class="kt"><b>Amber lane</b> · the recommended flow.</div>
-        </div>
-        <div class="keyrow" style="color:#BE3C36">
-          <div class="sw"><div class="bx" style="background:rgba(214,64,58,.14)"></div></div>
-          <div class="kt"><b>Red lane</b> · the flow the client proposed.</div>
-        </div>
-        <div class="keyrow" style="color:#4C63D8">
-          <div class="sw"><div class="ln"></div></div>
-          <div class="kt"><b>Solid blue, downward</b> · an order travelling toward SAP.</div>
-        </div>
-        <div class="keyrow" style="color:#0F9E8E">
-          <div class="sw"><div class="ln d"></div></div>
-          <div class="kt"><b>Dashed teal, upward</b> · the updated stock number travelling back out to the channels.</div>
-        </div>
-        <div class="keyrow" style="color:#4C63D8">
-          <div class="sw"><div class="ln t"></div></div>
-          <div class="kt"><b>Thick line</b> · a path carrying every channel at once. Thin lines carry one channel each.</div>
-        </div>
-        <div class="keyrow" style="color:#0A6ED1">
-          <div class="sw"><div class="bx"></div></div>
-          <div class="kt"><b>Blue outline</b> · SAP, the system of record.</div>
-        </div>
-        <div class="keyrow" style="color:#C2255C">
-          <div class="sw"><div class="bx" style="background:#FDECF2"></div></div>
-          <div class="kt"><b>Pink fill</b> · where the shape adds risk, with its note in the same colour.</div>
-        </div>
-        <div class="keyrow" style="color:#7E8A9C">
-          <div class="sw"><div class="ln d"></div></div>
-          <div class="kt"><b>Dotted leader</b> · joins each shape to its note in the margin. Every note is printed, none is hidden.</div>
-        </div>
-        <div class="keyrow" style="color:#8A94A3">
-          <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
-          <div class="kt"><b>Equal spacing</b> · every hop is drawn the same distance, so the lane that ends lower is the one that takes longer.</div>
-        </div>
       </div>
 
     </div>
@@ -570,6 +579,16 @@ const bottomOf=id=>{const e=el(id);return e.offsetTop+e.offsetHeight;};
 /* centre-positioned elements carry their centre in style.top, so their foot is centre + half */
 const footOf=id=>{const e=el(id);return e.offsetTop+e.offsetHeight/2;};
 
+/* ---- the key band sits above the flow, so the whole flow layer drops below it ---- */
+const KEY_TOP = 40;
+el('pKey').style.top = KEY_TOP + 'px';
+const FLOW_TOP = KEY_TOP + el('pKey').offsetHeight + 44;
+const shift = FLOW_TOP - 70;
+document.querySelectorAll('.stage > *').forEach(e=>{
+  if(e === svg || e.classList.contains('panel')) return;
+  e.style.top = (parseFloat(e.style.top || 0) + shift) + 'px';
+});
+
 /* ---- flow furniture, stacked off the last node of each lane ---- */
 const aFoot = footOf('a4');
 const bFoot = footOf('b6');
@@ -584,15 +603,14 @@ el('tagB').style.top     = (bFoot + 42) + 'px';
 el('stickyB').style.top  = Math.round(footOf('tagB') + 46 + el('stickyB').offsetHeight/2) + 'px';
 
 /* the flow frame closes just under whatever the two lanes actually reach */
-const frameTop = 70;
 const frameBottom = Math.round(Math.max(footOf('sticky'), footOf('stickyB')) + 54);
-el('frame').style.height = (frameBottom - frameTop) + 'px';
-el('divider').style.height = (frameBottom - 150 - 26) + 'px';
-el('laneA').style.height = (frameBottom - 132 - 14) + 'px';
-el('laneB').style.height = (frameBottom - 132 - 14) + 'px';
+el('frame').style.height = (frameBottom - FLOW_TOP) + 'px';
+el('divider').style.height = (frameBottom - (150 + shift) - 26) + 'px';
+el('laneA').style.height = (frameBottom - (132 + shift) - 14) + 'px';
+el('laneB').style.height = (frameBottom - (132 + shift) - 14) + 'px';
 
-/* the five panels sit in a row beneath the frame, all starting level */
-const PANELS = ['pProp','pClient','pScore','pRec','pKey'];
+/* the four comparison panels sit in a row beneath the frame, all starting level */
+const PANELS = ['pProp','pClient','pScore','pRec'];
 const panelTop = frameBottom + 48;
 PANELS.forEach(id => el(id).style.top = panelTop + 'px');
 const BOARD_H = Math.max(...PANELS.map(bottomOf)) + 56;
