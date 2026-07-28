@@ -39,7 +39,7 @@
     background:var(--board);
     border:1px solid rgba(28,36,48,.12);
     box-shadow:0 26px 60px -30px rgba(23,33,52,.42), inset 0 1px 0 rgba(255,255,255,.7);}
-  .stage{position:relative; width:2140px; height:1600px; transform-origin:top left; z-index:1;
+  .stage{position:relative; width:2340px; height:1600px; transform-origin:top left; z-index:1;
     background-image:radial-gradient(rgba(28,42,64,.16) 1.1px, transparent 1.3px);
     background-size:26px 26px; background-position:13px 13px;}
   #svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none}
@@ -51,15 +51,14 @@
   .lane-t{position:absolute; transform:translateX(-50%); text-align:center; white-space:nowrap}
   .lane-t .n{font-size:14px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
   .lane-t .s{font-size:12px;font-style:italic;color:var(--redink);font-weight:600;margin-top:2px}
-  .divider{position:absolute; border-left:1px dashed #D8DDE5}
+  .divider{position:absolute; border-left:1px dashed #DFE4EC}
 
   /* ---- MIRO flow shapes ---- */
   .mn{position:absolute; transform:translate(-50%,-50%); background:#fff;
     border:1.5px solid #2A3442; border-radius:9px; color:var(--ink);
     display:grid; place-items:center; text-align:center; padding:8px 12px;
-    font-size:12.5px; line-height:1.32; cursor:default; transition:box-shadow .16s ease, transform .16s ease;}
-  .mn:hover{box-shadow:0 8px 18px rgba(23,33,52,.16); transform:translate(-50%,-50%) translateY(-2px)}
-  .mn:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(10,110,209,.45)}
+    font-size:12.5px; line-height:1.32; cursor:default; transition:box-shadow .16s ease;}
+  .mn:hover{box-shadow:0 8px 18px rgba(23,33,52,.14)}
   .mn b{font-weight:750}
   .mn .sm{display:block;font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.25}
   .mn.oval{border-radius:999px}
@@ -68,25 +67,38 @@
   .mn.risk{border-color:var(--risk); color:var(--risk)}
   .mn.risk .sm{color:#C4708F}
 
-  .cloud{position:absolute; transform:translate(-50%,-50%); background:#fff;
-    border:1.6px solid var(--risk); color:var(--risk);
-    border-radius:62% 44% 56% 50% / 54% 62% 44% 56%;
-    padding:20px 24px; font-size:11.5px; font-style:italic; text-align:center; line-height:1.4; font-weight:600;
-    cursor:default;}
-  .cloud:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(194,37,92,.35)}
+  /* ---- side annotations: every note is printed on the board ---- */
+  .note{position:absolute; transform:translate(-50%,-50%); width:260px; background:#fff;
+    border:1px solid #E6EAF1; border-radius:9px; padding:11px 13px;
+    box-shadow:0 1px 2px rgba(23,33,52,.05);}
+  .note .nt{font-size:12px; font-weight:750; line-height:1.3; color:#2A3442}
+  .note .nd{font-size:11.5px; line-height:1.5; color:#5A6472; margin-top:4px}
+  .note.l{border-right:3px solid #C6CEDB}
+  .note.r{border-left:3px solid #C6CEDB}
+  .note.blue.l{border-right-color:var(--sap)}
+  .note.blue.r{border-left-color:var(--sap)}
+  .note.blue .nt{color:var(--sap)}
+  .note.risk.l{border-right-color:var(--risk)}
+  .note.risk.r{border-left-color:var(--risk)}
+  .note.risk .nt{color:var(--risk)}
 
-  .pin{position:absolute; transform:translate(-50%,-50%); width:32px; height:32px;
-    border-radius:50% 50% 50% 5px; background:#2D9BF0; color:#fff; display:grid; place-items:center;
-    font-size:11.5px; font-weight:800; box-shadow:0 3px 9px rgba(45,155,240,.45); cursor:default; z-index:5;}
+  /* ---- board sticky (the comment, printed) ---- */
+  .sticky{position:absolute; transform:translate(-50%,-50%); width:268px; padding:14px 16px 16px;
+    background:#FFF3BE; border:1px solid #F0E098; border-radius:3px;
+    box-shadow:0 8px 16px -8px rgba(90,74,12,.42);}
+  .sticky .st{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:#9A7B12; margin-bottom:7px}
+  .sticky .sb{font-size:12px; line-height:1.5; color:#4A4223; font-weight:600}
 
   .ftag{position:absolute; transform:translate(-50%,-50%); background:#fff; border:1px solid var(--line);
     border-radius:999px; padding:5px 13px; font-size:12px; font-weight:700; box-shadow:0 3px 9px rgba(23,33,52,.09);
     display:flex; align-items:center; gap:7px; white-space:nowrap; z-index:3;}
-  .ftag i{width:9px;height:9px;border-radius:50%;font-style:normal;flex:0 0 auto}
-  .ftag.dash i{border-radius:2px;height:4px;width:15px}
   .ftag.good{background:#EAF6EE;border-color:#CBE8D5;color:#1B7A3D}
   .ftag.bad{background:#FCEDF2;border-color:#F2CEDC;color:var(--risk)}
-  .ftag.mark{font-weight:650;font-style:italic;color:#5A6472;font-size:11.5px}
+
+  .markcard{position:absolute; transform:translate(-50%,-50%); width:260px; background:#fff;
+    border:1px dashed #C9D0DB; border-radius:9px; padding:10px 13px; z-index:3;
+    font-size:11.5px; font-style:italic; font-weight:600; color:#5A6472; line-height:1.45}
 
   .lanenote{position:absolute; transform:translate(-50%,-50%); text-align:center;
     font-size:13px; font-weight:750; color:#8A94A3; line-height:1.4;}
@@ -130,12 +142,6 @@
   .callout{margin-top:18px;background:var(--sap);color:#fff;text-align:center;
     padding:13px 14px;font-size:12px;font-weight:650;line-height:1.4}
 
-  #tip{position:fixed; z-index:50; max-width:310px; background:#1C2430; color:#F4F6F9; border-radius:11px;
-    padding:11px 13px; font-size:12.8px; line-height:1.5; box-shadow:0 10px 30px rgba(10,15,30,.28);
-    opacity:0; transform:translateY(4px); transition:opacity .13s ease, transform .13s ease; pointer-events:none;}
-  #tip.show{opacity:1; transform:translateY(0)}
-  #tip .th{font-weight:700;font-size:13px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
-  #tip .th .sw{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
   @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 
@@ -170,120 +176,136 @@
   <h1>Direct to SAP, or everything through Shopify?</h1>
   <p class="cap">The concept we started from and the shape we proposed, drawn next to each other. Both need <b>the same five connectors</b> — what changes is what sits between a channel and SAP, and what happens when that thing is down. Each lane is drawn at <b>the same distance per hop</b>, so where a lane ends is where that option actually lands.</p>
   <p class="hint">
-    <span class="hoverhint">✦ hover any shape for detail</span>
+    <span class="hoverhint">✦ every note is printed beside its shape</span>
     <span class="zoom" role="group" aria-label="Board zoom">
       <button type="button" id="zFit" aria-pressed="true">Fit</button>
       <button type="button" id="z100" aria-pressed="false">100%</button>
     </span>
-    <span>Zoom to 100% to read the board, then scroll to pan.</span>
+    <span>Nothing is hidden behind a hover — the whole board reads from a single screenshot.</span>
   </p>
 
   <div class="stage-wrap" id="stageWrap">
     <div class="stage" id="stage">
-      <svg id="svg" viewBox="0 0 2140 1600" preserveAspectRatio="none" aria-hidden="true"><defs id="defs"></defs><g id="paths"></g></svg>
+      <svg id="svg" viewBox="0 0 2340 1600" preserveAspectRatio="none" aria-hidden="true"><defs id="defs"></defs><g id="paths"></g></svg>
 
       <!-- ================= FLOW FRAME ================= -->
-      <div class="frame" id="frame" style="left:40px;top:70px;width:1120px;height:1400px"></div>
-      <div class="frame-t" style="left:40px;top:92px;width:1120px">Order &amp; inventory flow — side by side</div>
-      <div class="divider" id="divider" style="left:585px;top:150px;height:1300px"></div>
+      <div class="frame" id="frame" style="left:40px;top:70px;width:1360px;height:1400px"></div>
+      <div class="frame-t" style="left:40px;top:92px;width:1360px">Order &amp; inventory flow — side by side</div>
+      <div class="divider" id="divider" style="left:700px;top:150px;height:1300px"></div>
 
-      <div class="lane-t" style="left:315px;top:150px">
+      <div class="lane-t" style="left:480px;top:150px">
         <div class="n">Our proposal</div>
         <div class="s">Channel → connector → SAP</div>
       </div>
-      <div class="lane-t" style="left:835px;top:150px">
+      <div class="lane-t" style="left:930px;top:150px">
         <div class="n">Initial concept</div>
         <div class="s">Channel → connector → Shopify → connector → SAP</div>
       </div>
 
       <!-- ---- lane A : 4 stops, 170px apart ---- -->
-      <div class="mn oval ctr" id="a1" style="left:315px;top:290px;width:250px;height:68px"
-        data-tip-title="Customer order"
-        data-tip="A customer checks out on whichever channel they use — the storefront, the marketplace, or their GPO platform. Identical in both approaches; everything after this is what differs.">
+      <div class="mn oval ctr" id="a1" style="left:480px;top:290px;width:250px;height:68px">
         <div>A customer orders on a channel</div>
       </div>
+      <div class="note l ctr" id="nA1" style="left:190px;top:290px">
+        <div class="nt">Customer order</div>
+        <div class="nd">A customer checks out on whichever channel they use. Identical in both approaches — everything after this is what differs.</div>
+      </div>
 
-      <div class="mn ctr" id="a2" style="left:315px;top:460px;width:262px;height:74px"
-        data-tip-title="Five channels"
-        data-tip="Shopify, Net32, Dentira, ZenOne and any additional platform. Here Shopify is one channel among five — a place customers buy, not a hub the others pass through.">
+      <div class="mn ctr" id="a2" style="left:480px;top:460px;width:262px;height:74px">
         <div><b>Shopify · Net32 · Dentira</b><span class="sm">ZenOne · other platforms</span></div>
       </div>
-
-      <div class="mn ctr" id="a3" style="left:315px;top:630px;width:230px;height:62px"
-        data-tip-title="One connector per channel"
-        data-tip="Five connectors, each mapping one channel's orders into SAP and carrying SAP's stock number back out. APPSeConnect is the one that serves Shopify.">
-        <div>Each channel's own connector<span class="sm">five in total</span></div>
+      <div class="note l ctr" id="nA2" style="left:190px;top:460px">
+        <div class="nt">Five channels, side by side</div>
+        <div class="nd">Shopify is one channel among five here — a place customers buy, not a hub the other four have to pass through.</div>
       </div>
 
-      <div class="mn blue ctr" id="a4" style="left:315px;top:800px;width:252px;height:76px"
-        data-tip-title="SAP"
-        data-tip="The order lands here and stock decrements immediately. SAP owns the number and publishes the same one back to every channel at once, so no channel drifts out of step with another.">
+      <div class="mn ctr" id="a3" style="left:480px;top:630px;width:230px;height:62px">
+        <div>Each channel's own connector<span class="sm">five in total — the platforms known today</span></div>
+      </div>
+      <div class="note l ctr" id="nA3" style="left:190px;top:630px">
+        <div class="nt">One connector per channel</div>
+        <div class="nd">Five connectors as things stand today — one per platform we currently know of. Each maps a channel's orders into SAP and carries SAP's stock number back out. APPSeConnect is the one serving Shopify.</div>
+      </div>
+
+      <div class="mn blue ctr" id="a4" style="left:480px;top:800px;width:252px;height:76px">
         <div><b>SAP</b><span class="sm">order lands · stock decrements · one number out</span></div>
+      </div>
+      <div class="note blue l ctr" id="nA4" style="left:190px;top:800px">
+        <div class="nt">SAP — the source of truth</div>
+        <div class="nd">The order lands and stock decrements immediately. SAP owns the number and publishes the same one to every channel at once, so none drifts out of step.</div>
       </div>
 
       <!-- ---- lane B : 6 stops, the same 170px apart ---- -->
-      <div class="mn oval ctr" id="b1" style="left:835px;top:290px;width:250px;height:68px"
-        data-tip-title="Customer order"
-        data-tip="The same starting point as our proposal. A customer checks out on a channel.">
+      <div class="mn oval ctr" id="b1" style="left:930px;top:290px;width:250px;height:68px">
         <div>A customer orders on a channel</div>
       </div>
+      <div class="note r ctr" id="nB1" style="left:1230px;top:290px">
+        <div class="nt">Customer order</div>
+        <div class="nd">The same starting point as our proposal — a customer checks out on a channel.</div>
+      </div>
 
-      <div class="mn ctr" id="b2" style="left:835px;top:460px;width:262px;height:64px"
-        data-tip-title="Four channels — Shopify has moved"
-        data-tip="Net32, Dentira, ZenOne and other platforms. Shopify is no longer beside them: it has been moved underneath, as the layer they all have to pass through.">
+      <div class="mn ctr" id="b2" style="left:930px;top:460px;width:262px;height:64px">
         <div><b>Net32 · Dentira · ZenOne</b><span class="sm">other platforms</span></div>
       </div>
+      <div class="note r ctr" id="nB2" style="left:1230px;top:460px">
+        <div class="nt">Four channels — Shopify has moved</div>
+        <div class="nd">Shopify is no longer beside the others: it has been moved underneath, as the layer they all have to pass through.</div>
+      </div>
 
-      <div class="mn ctr" id="b3" style="left:835px;top:630px;width:248px;height:64px"
-        data-tip-title="Still one connector per channel"
-        data-tip="The connector count is unchanged here. Every channel still needs its own — it just points at Shopify instead of SAP, and the same integrations get built, mapped and maintained.">
+      <div class="mn ctr" id="b3" style="left:930px;top:630px;width:248px;height:64px">
         <div>Each channel's own connector<span class="sm">still one each — now pointing at Shopify</span></div>
       </div>
+      <div class="note r ctr" id="nB3" style="left:1230px;top:630px">
+        <div class="nt">Still one connector per channel</div>
+        <div class="nd">The connector count is unchanged. Each one just points at Shopify instead of SAP — the same integrations still get built and maintained.</div>
+      </div>
 
-      <div class="mn risk ctr" id="b4" style="left:835px;top:800px;width:252px;height:80px"
-        data-tip-title="Shopify as relay"
-        data-tip="Shopify was built as a DTC storefront. Here it carries marketplace and GPO traffic it has no native model for — no contract pricing, no GPO terms, no PO-style orders — and every message in both directions has to cross it.">
+      <div class="mn risk ctr" id="b4" style="left:930px;top:800px;width:252px;height:80px">
         <div><b>Shopify — relay</b><span class="sm">carrying order types it has no native model for</span></div>
       </div>
+      <div class="note risk r ctr" id="nB4" style="left:1230px;top:800px">
+        <div class="nt">Shopify as relay</div>
+        <div class="nd">Shopify wasn't built for the kind of order management we would be asking of it here. It carries marketplace and GPO traffic it has no native model for — no contract pricing, no GPO terms, no PO-style orders.</div>
+      </div>
 
-      <div class="mn ctr" id="b5" style="left:835px;top:970px;width:210px;height:58px"
-        data-tip-title="APPSeConnect"
-        data-tip="The sixth integration. In our proposal this is simply Shopify's own connector; here it also has to carry every other channel's traffic, which makes it the narrowest point in the whole system.">
+      <div class="mn ctr" id="b5" style="left:930px;top:970px;width:210px;height:58px">
         <div><b>APPSeConnect</b></div>
       </div>
+      <div class="note r ctr" id="nB5" style="left:1230px;top:970px">
+        <div class="nt">The sixth integration</div>
+        <div class="nd">In our proposal this is simply Shopify's own connector. Here it carries every other channel's traffic too, which makes it the narrowest point in the system.</div>
+      </div>
 
-      <div class="mn blue ctr" id="b6" style="left:835px;top:1140px;width:252px;height:76px"
-        data-tip-title="SAP"
-        data-tip="The order finally lands and stock decrements — two hops after the customer placed it. The new number then has to travel the same two hops back out before any channel sees it.">
+      <div class="mn blue ctr" id="b6" style="left:930px;top:1140px;width:252px;height:76px">
         <div><b>SAP</b><span class="sm">order lands · stock decrements</span></div>
       </div>
-
-      <div class="cloud ctr" id="cloud" style="left:1058px;top:660px;width:172px"
-        data-tip-title="The overselling window"
-        data-tip="SAP has already decremented to 90. Until the new number crosses APPSeConnect, then Shopify, then each channel's own connector, every channel is still quoting 100 — and still taking orders against it.">
-        SAP already says 90. The channels still show 100.
+      <div class="note blue r ctr" id="nB6" style="left:1230px;top:1140px">
+        <div class="nt">SAP — two hops later</div>
+        <div class="nd">The order finally lands and stock decrements. The new number then has to travel the same two hops back out before any channel sees it.</div>
       </div>
-
-      <div class="pin" id="pin"
-        data-tip-title="Board comment"
-        data-tip="Worth keeping in view: routing through Shopify doesn't retire any of the five channel connectors — those get built either way — it adds a sixth on top.">1</div>
 
       <!-- ---- the marker line: where the proposed flow has already finished ---- -->
-      <div class="ftag mark" id="markTag" style="left:575px;top:920px">
-        By here our proposal has landed in SAP — the initial concept is only at Shopify
+      <div class="markcard ctr" id="markCard" style="left:190px;top:936px">
+        By here our proposal has already landed in SAP — the initial concept is only as far as Shopify.
       </div>
 
-      <div class="ftag good" id="tagA" style="left:315px;top:940px">1 hop each way</div>
-      <div class="ftag bad"  id="tagB" style="left:835px;top:1250px">2 hops each way</div>
+      <div class="ftag good" id="tagA" style="left:480px;top:872px">1 hop each way</div>
+      <div class="ftag bad"  id="tagB" style="left:930px;top:1220px">2 hops each way</div>
 
       <!-- the empty half of lane A is the point, so it gets said out loud -->
-      <div class="lanenote" id="laneNote" style="left:315px;top:1090px;width:300px">
+      <div class="lanenote" id="laneNote" style="left:480px;top:1068px;width:300px">
         Nothing further to draw.<br>
         <span>The order is already in SAP, and the new stock number is already on its way back out to every channel.</span>
       </div>
 
+      <!-- ---- board comment, printed instead of pinned ---- -->
+      <div class="sticky ctr" id="sticky" style="left:480px;top:1290px">
+        <div class="st">Board note</div>
+        <div class="sb">Routing through Shopify doesn't retire any of the five channel connectors — those get built either way. It adds a sixth integration on top of them.</div>
+      </div>
+
       <!-- ================= PANEL: OUR PROPOSAL ================= -->
-      <div class="panel" id="pProp" style="left:1200px;top:70px;width:430px">
+      <div class="panel" id="pProp" style="left:1440px;top:70px;width:430px">
         <h3>Our proposal</h3>
         <p class="psub">Every channel connects directly to SAP</p>
         <div class="rule"></div>
@@ -334,7 +356,7 @@
       </div>
 
       <!-- ================= PANEL: INITIAL CONCEPT ================= -->
-      <div class="panel" id="pClient" style="left:1200px;top:820px;width:430px">
+      <div class="panel" id="pClient" style="left:1440px;top:820px;width:430px">
         <h3>Initial concept</h3>
         <p class="psub">Every channel routes through Shopify to reach SAP</p>
         <div class="rule"></div>
@@ -360,7 +382,7 @@
 
         <div class="item c"><div class="mk">−</div><div>
           <div class="t">An extra hop on every message</div>
-          <div class="d">Orders and stock updates both cross Shopify. SAP says 90 while the channels still show 100 — and that gap is the overselling window.</div>
+          <div class="d">Orders and stock updates both cross Shopify, so every message travels two hops instead of one — one more place for it to stall, and one more thing to reconcile when it does.</div>
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
@@ -375,7 +397,7 @@
 
         <div class="item c"><div class="mk">−</div><div>
           <div class="t">A data model that doesn't fit</div>
-          <div class="d">Shopify has no native B2B contract pricing, GPO terms or PO-style orders, so Dentira's terms have to be mapped into a DTC order object.</div>
+          <div class="d">Shopify has no native B2B contract pricing, GPO terms or PO-style orders, so Dentira's terms have to be mapped into a standard storefront order object.</div>
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
@@ -385,7 +407,7 @@
       </div>
 
       <!-- ================= SCORECARD ================= -->
-      <div class="panel score" id="pScore" style="left:1710px;top:70px;width:390px">
+      <div class="panel score" id="pScore" style="left:1910px;top:70px;width:390px">
         <h3>Decision scorecard</h3>
         <p class="psub">Same five connectors — here is what actually differs</p>
         <div class="rule"></div>
@@ -401,7 +423,7 @@
       </div>
 
       <!-- ================= RECOMMENDATION ================= -->
-      <div class="panel" id="pRec" style="left:1710px;top:560px;width:390px">
+      <div class="panel" id="pRec" style="left:1910px;top:560px;width:390px">
         <h3>Recommendation</h3>
         <p class="psub">Connect every channel directly to SAP</p>
         <div class="rule"></div>
@@ -428,7 +450,7 @@
       </div>
 
       <!-- ================= KEY ================= -->
-      <div class="panel" id="pKey" style="left:1710px;top:1100px;width:390px">
+      <div class="panel" id="pKey" style="left:1910px;top:1100px;width:390px">
         <h3>How to read this board</h3>
         <p class="psub">Same shapes and same spacing in both lanes</p>
         <div class="rule"></div>
@@ -447,7 +469,11 @@
         </div>
         <div class="keyrow" style="color:#C2255C">
           <div class="sw"><div class="bx"></div></div>
-          <div class="kt"><b>Pink outline</b> — where an option adds risk, with the annotation attached to it.</div>
+          <div class="kt"><b>Pink outline</b> — where an option adds risk, with its note in the same colour.</div>
+        </div>
+        <div class="keyrow" style="color:#9AA4B2">
+          <div class="sw"><div class="ln d"></div></div>
+          <div class="kt"><b>Faint dotted leader</b> — joins each shape to its note in the margin. Every note is printed, none is hidden.</div>
         </div>
         <div class="keyrow" style="color:#8A94A3">
           <div class="sw"><div class="bx" style="border-style:dashed;height:26px;border-left:0;border-right:0"></div></div>
@@ -459,14 +485,12 @@
   </div>
 </div>
 
-<div id="tip" role="tooltip"></div>
-
 <script>
 const SVGNS='http://www.w3.org/2000/svg';
 const stage=document.getElementById('stage'), svg=document.getElementById('svg');
 const defs=document.getElementById('defs'), pathsG=document.getElementById('paths');
 const C={orders:'#4C63D8', inv:'#0F9E8E', risk:'#C2255C', grey:'#9AA4B2'};
-const BOARD_W=2140;
+const BOARD_W=2340;
 
 /* arrowheads */
 for(const [k,hex] of Object.entries(C)){
@@ -480,21 +504,36 @@ for(const [k,hex] of Object.entries(C)){
 /* ---------- 1. lay the board out, then size it to its contents ---------- */
 const el=id=>document.getElementById(id);
 const bottomOf=id=>{const e=el(id);return e.offsetTop+e.offsetHeight;};
+/* .ctr elements are positioned by their centre, so their foot is centre + half */
+const footOf=id=>{const e=el(id);return e.offsetTop+e.offsetHeight/2;};
 
 /* stack the two source panels, then centre the recommendation between them */
 el('pClient').style.top = (bottomOf('pProp') + 46) + 'px';
 const colBottom = bottomOf('pClient');
 el('pRec').style.top = Math.round((el('pProp').offsetTop + colBottom)/2 - el('pRec').offsetHeight/2) + 'px';
 
-/* the flow frame ends level with the panel column */
 /* the key card sits at the foot of the right column, bottom-aligned with the others */
 el('pKey').style.top = Math.max(bottomOf('pRec') + 46, colBottom - el('pKey').offsetHeight) + 'px';
 
-const frameTop = 70, frameBottom = Math.max(colBottom, bottomOf('pKey'));
+/* ---- flow-lane furniture, stacked off the last node of each lane ---- */
+const aFoot = el('a4').offsetTop + el('a4').offsetHeight/2;
+const bFoot = el('b6').offsetTop + el('b6').offsetHeight/2;
+
+el('tagA').style.top    = (aFoot + 34) + 'px';
+const markY = aFoot + 98;
+el('markCard').style.top = markY + 'px';
+el('laneNote').style.top = (markY + 132) + 'px';
+el('sticky').style.top   = Math.round(footOf('laneNote') + 48 + el('sticky').offsetHeight/2) + 'px';
+
+el('tagB').style.top  = (bFoot + 42) + 'px';
+
+/* the flow frame closes just under whatever the two lanes actually reach */
+const frameTop = 70;
+const frameBottom = Math.round(Math.max(footOf('tagB'), footOf('sticky')) + 54);
 el('frame').style.height = (frameBottom - frameTop) + 'px';
 el('divider').style.height = (frameBottom - 150 - 24) + 'px';
 
-const BOARD_H = frameBottom + 60;
+const BOARD_H = Math.max(frameBottom, colBottom, bottomOf('pKey')) + 60;
 stage.style.height = BOARD_H + 'px';
 svg.setAttribute('viewBox', '0 0 '+BOARD_W+' '+BOARD_H);
 
@@ -512,7 +551,7 @@ function draw(d,hex,{dash,width,head=true,opacity=.55}={}){
   p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',hex);
   p.setAttribute('stroke-width',width||2.2);p.setAttribute('stroke-linecap','round');
   p.setAttribute('stroke-opacity',opacity);
-  if(dash)p.setAttribute('stroke-dasharray','7 5');
+  if(dash)p.setAttribute('stroke-dasharray', typeof dash==='string' ? dash : '7 5');
   if(head)p.setAttribute('marker-end','url(#ar-'+keyFor(hex)+')');
   pathsG.appendChild(p);
 }
@@ -521,18 +560,22 @@ function down(aId,bId){
   const a=box(aId),b=box(bId);
   draw('M '+a.cx+' '+(a.b+5)+' V '+(b.t-7), C.orders);
 }
-/* inventory: elbow back up the left-hand side */
+/* inventory: elbow back up an outside channel — left of the lane, or right of it */
 function upLeft(aId,bId,x){
   const a=box(aId),b=box(bId),r=12,sy=a.cy,ty=b.cy;
   draw('M '+(a.l-5)+' '+sy+' H '+(x+r)+' Q '+x+' '+sy+' '+x+' '+(sy-r)+
        ' V '+(ty+r)+' Q '+x+' '+ty+' '+(x+r)+' '+ty+' H '+(b.l-7), C.inv, {dash:true});
 }
-/* pink tether from the cloud to the shape it annotates */
-function tether(fromId,toId){
-  const a=box(fromId),b=box(toId);
-  const sx=a.cx-26, sy=a.b-6, tx=b.r+5, ty=b.t+18;
-  draw('M '+sx+' '+sy+' C '+(sx-52)+' '+(sy+34)+' '+(tx+78)+' '+(ty-36)+' '+tx+' '+ty,
-       C.risk, {width:1.6, opacity:.8});
+function upRight(aId,bId,x){
+  const a=box(aId),b=box(bId),r=12,sy=a.cy,ty=b.cy;
+  draw('M '+(a.r+5)+' '+sy+' H '+(x-r)+' Q '+x+' '+sy+' '+x+' '+(sy-r)+
+       ' V '+(ty+r)+' Q '+x+' '+ty+' '+(x-r)+' '+ty+' H '+(b.r+7), C.inv, {dash:true});
+}
+/* faint dotted leader joining a margin note to the shape it belongs to */
+function leader(noteId,shapeId){
+  const n=box(noteId), s=box(shapeId), y=s.cy;
+  const [x1,x2] = n.cx < s.cx ? [n.r+5, s.l-5] : [n.l-5, s.r+5];
+  draw('M '+x1+' '+y+' H '+x2, C.grey, {width:1.2, dash:'2 5', head:false, opacity:.55});
 }
 /* curved connector from a panel's right edge into the recommendation */
 function curveInto(fromId,toId){
@@ -543,65 +586,24 @@ function curveInto(fromId,toId){
 
 /* ---------- 3. draw ---------- */
 down('a1','a2'); down('a2','a3'); down('a3','a4');
-upLeft('a4','a2',145);
+upRight('a4','a2',645);
 
 down('b1','b2'); down('b2','b3'); down('b3','b4'); down('b4','b5'); down('b5','b6');
-upLeft('b6','b4',650);
-upLeft('b4','b2',650);
+upLeft('b6','b4',768);
+upLeft('b4','b2',768);
 
-tether('cloud','b4');
+[['nA1','a1'],['nA2','a2'],['nA3','a3'],['nA4','a4'],
+ ['nB1','b1'],['nB2','b2'],['nB3','b3'],['nB4','b4'],['nB5','b5'],['nB6','b6']]
+  .forEach(([n,s])=>leader(n,s));
+
 curveInto('pProp','pRec');
 curveInto('pClient','pRec');
 
 /* the marker line: both lanes are drawn at the same distance per hop, so this
    is the moment our proposal is done and the initial concept is still mid-relay */
-(function(){
-  const y = box('a4').b + 44;
-  el('markTag').style.top = y + 'px';
-  const t = el('markTag'), half = t.offsetWidth/2 + 12, cx = t.offsetLeft;
-  draw('M 120 '+y+' H '+(cx-half), C.grey, {width:1.4, dash:true, head:false, opacity:.5});
-  draw('M '+(cx+half)+' '+y+' H 1090', C.grey, {width:1.4, dash:true, head:false, opacity:.5});
-  /* park the lane-A note in the middle of the space lane A doesn't need */
-  el('laneNote').style.top = Math.round((y + frameBottom)/2) + 'px';
-})();
+draw('M '+(box('markCard').r+14)+' '+markY+' H 1082', C.grey, {width:1.4, dash:'6 6', head:false, opacity:.5});
 
-/* park the comment pin on the corner of the Shopify relay */
-(function(){const b=box('b4'), p=el('pin');
-  p.style.left=(b.l-2)+'px'; p.style.top=(b.t-2)+'px';})();
-
-/* ---------- 4. tooltips ---------- */
-const tip=document.getElementById('tip');
-function swatch(t){
-  if(t.classList.contains('blue'))return '#0A6ED1';
-  if(t.classList.contains('risk')||t.id==='cloud')return '#C2255C';
-  if(t.id==='pin')return '#2D9BF0';
-  return '#2A3442';
-}
-function showTip(e){
-  const t=e.currentTarget; if(!t.dataset.tip)return;
-  tip.innerHTML='<div class="th"><span class="sw" style="background:'+swatch(t)+'"></span>'+t.dataset.tipTitle+'</div>'+t.dataset.tip;
-  tip.classList.add('show');
-  if(e.clientX!==undefined) moveTip(e);
-  else {const r=t.getBoundingClientRect(); moveTip({clientX:r.right,clientY:r.bottom});}
-}
-function moveTip(e){
-  const pad=16,w=tip.offsetWidth,h=tip.offsetHeight;
-  let x=e.clientX+pad,y=e.clientY+pad;
-  if(x+w>innerWidth-8)x=e.clientX-w-pad;
-  if(y+h>innerHeight-8)y=e.clientY-h-pad;
-  tip.style.left=Math.max(8,x)+'px'; tip.style.top=Math.max(8,y)+'px';
-}
-function hideTip(){tip.classList.remove('show');}
-document.querySelectorAll('[data-tip]').forEach(e=>{
-  e.addEventListener('mouseenter',showTip);
-  e.addEventListener('mousemove',moveTip);
-  e.addEventListener('mouseleave',hideTip);
-  if(e.classList.contains('mn')||e.classList.contains('cloud')){
-    e.tabIndex=0; e.addEventListener('focus',showTip); e.addEventListener('blur',hideTip);
-  }
-});
-
-/* ---------- 5. zoom: fit the whole board, or read it at full size and pan ---------- */
+/* ---------- 4. zoom: fit the whole board, or read it at full size and pan ---------- */
 const wrap=document.getElementById('stageWrap');
 const zFit=el('zFit'), z100=el('z100');
 let mode='fit';
