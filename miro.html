@@ -54,6 +54,7 @@
   .lanebg.rec{background:var(--recwash); border:1px solid var(--recline)}
   .lanebg.cli{background:var(--cliwash); border:1px solid var(--cliline)}
   .lane-t{position:absolute; transform:translateX(-50%); text-align:center; white-space:nowrap; z-index:3}
+  .lane-t .o{font-size:11px;font-weight:800;letter-spacing:.20em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
   .lane-t .n{font-size:14.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
   .lane-t .s{font-size:12px;font-style:italic;font-weight:600;margin-top:2px}
   .lane-t.rec .n{color:#8A5F05} .lane-t.rec .s{color:#A9791A}
@@ -143,6 +144,8 @@
   .panel{position:absolute; background:#fff; border:1px solid var(--frame); border-radius:2px; padding:20px 21px 22px;
     box-shadow:0 2px 10px rgba(23,33,52,.05);}
   .panel h3{margin:0; text-align:center; font-size:14.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+  .panel .popt{margin:0 0 5px; text-align:center; font-size:10px; font-weight:800;
+    letter-spacing:.20em; text-transform:uppercase; color:var(--muted)}
   .panel .psub{margin:3px 0 0; text-align:center; font-size:12px; font-style:italic; font-weight:600; color:var(--redink)}
   .panel .rule{height:1px;background:var(--line);margin:15px 0 4px}
   .panel.rec{border-top:4px solid var(--rec)}
@@ -268,145 +271,148 @@
 
       <!-- ================= FLOW FRAME + LANE WASHES (behind the arrows) ================= -->
       <div class="frame" id="frame" style="left:40px;top:70px;width:1794px;height:1400px"></div>
-      <div class="lanebg rec" id="laneA" style="left:48px;top:132px;width:874px;height:1300px"></div>
-      <div class="lanebg cli" id="laneB" style="left:952px;top:132px;width:874px;height:1300px"></div>
+      <div class="lanebg cli" id="laneA" style="left:48px;top:132px;width:874px;height:1300px"></div>
+      <div class="lanebg rec" id="laneB" style="left:952px;top:132px;width:874px;height:1300px"></div>
 
       <svg id="svg" viewBox="0 0 1874 1600" preserveAspectRatio="none" aria-hidden="true"><defs id="defs"></defs><g id="paths"></g></svg>
 
       <div class="frame-t" style="left:40px;top:92px;width:1794px">Order and inventory flow, side by side</div>
       <div class="divider" id="divider" style="left:937px;top:150px;height:1300px"></div>
 
-      <div class="lane-t rec" style="left:500px;top:158px">
+      <div class="lane-t rec" style="left:1240px;top:158px">
+        <div class="o">Option two</div>
         <div class="n">Recommended</div>
         <div class="s">Channel → connector → SAP</div>
       </div>
-      <div class="lane-t cli" style="left:1300px;top:158px">
+      <div class="lane-t cli" style="left:660px;top:158px">
+        <div class="o">Option one</div>
         <div class="n">Client proposed</div>
         <div class="s">Channel → connector → Shopify → connector → SAP</div>
       </div>
 
       <!-- ================= LANE A : RECOMMENDED ================= -->
-      <div class="mn oval chip cust ctr" id="a1a" style="left:380px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on the storefront</span></div></div>
-      <div class="mn oval chip cust ctr" id="a1b" style="left:490px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Net32</span></div></div>
-      <div class="mn oval chip cust ctr" id="a1c" style="left:600px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Dentira</span></div></div>
-      <div class="mn oval chip cust ctr" id="a1d" style="left:710px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on ZenOne</span></div></div>
-      <div class="mn oval chip cust ctr" id="a1e" style="left:820px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on other platforms</span></div></div>
-      <div class="note l ctr" id="nA1" style="left:170px;top:290px">
+      <div class="mn oval chip cust ctr" id="a1a" style="left:1020px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on the storefront</span></div></div>
+      <div class="mn oval chip cust ctr" id="a1b" style="left:1130px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Net32</span></div></div>
+      <div class="mn oval chip cust ctr" id="a1c" style="left:1240px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Dentira</span></div></div>
+      <div class="mn oval chip cust ctr" id="a1d" style="left:1350px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on ZenOne</span></div></div>
+      <div class="mn oval chip cust ctr" id="a1e" style="left:1460px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on other platforms</span></div></div>
+      <div class="note r ctr" id="nA1" style="left:1704px;top:290px">
         <div class="nt">Five customer bases</div>
         <div class="nd">Each platform brings its own buyers, and they are separate audiences rather than one pool. Both shapes start here, so everything after this is what differs.</div>
       </div>
 
-      <div class="mn chip ctr" id="a2a" style="left:380px;top:460px;width:100px;height:54px"><div><b>Shopify</b></div></div>
-      <div class="mn chip ctr" id="a2b" style="left:490px;top:460px;width:100px;height:54px"><div><b>Net32</b></div></div>
-      <div class="mn chip ctr" id="a2c" style="left:600px;top:460px;width:100px;height:54px"><div><b>Dentira</b></div></div>
-      <div class="mn chip ctr" id="a2d" style="left:710px;top:460px;width:100px;height:54px"><div><b>ZenOne</b></div></div>
-      <div class="mn chip ctr" id="a2e" style="left:820px;top:460px;width:100px;height:54px"><div><b>Other platforms</b></div></div>
-      <div class="note l ctr" id="nA2" style="left:170px;top:460px">
+      <div class="mn chip ctr" id="a2a" style="left:1020px;top:460px;width:100px;height:54px"><div><b>Shopify</b></div></div>
+      <div class="mn chip ctr" id="a2b" style="left:1130px;top:460px;width:100px;height:54px"><div><b>Net32</b></div></div>
+      <div class="mn chip ctr" id="a2c" style="left:1240px;top:460px;width:100px;height:54px"><div><b>Dentira</b></div></div>
+      <div class="mn chip ctr" id="a2d" style="left:1350px;top:460px;width:100px;height:54px"><div><b>ZenOne</b></div></div>
+      <div class="mn chip ctr" id="a2e" style="left:1460px;top:460px;width:100px;height:54px"><div><b>Other platforms</b></div></div>
+      <div class="note r ctr" id="nA2" style="left:1704px;top:460px">
         <div class="nt">Five channels, side by side</div>
         <div class="nd">The five platforms we know of today, each its own box because each is its own channel. Shopify is one of them, a place customers buy, not a hub the other four pass through.</div>
       </div>
 
-      <div class="mn chip ctr" id="a3a" style="left:380px;top:630px;width:100px;height:58px"><div><b>APPSeConnect</b><span class="sm">→ SAP</span></div></div>
-      <div class="mn chip ctr" id="a3b" style="left:490px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
-      <div class="mn chip ctr" id="a3c" style="left:600px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
-      <div class="mn chip ctr" id="a3d" style="left:710px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
-      <div class="mn chip ctr" id="a3e" style="left:820px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
-      <div class="note l ctr" id="nA3" style="left:170px;top:630px">
+      <div class="mn chip ctr" id="a3a" style="left:1020px;top:630px;width:100px;height:58px"><div><b>APPSeConnect</b><span class="sm">→ SAP</span></div></div>
+      <div class="mn chip ctr" id="a3b" style="left:1130px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
+      <div class="mn chip ctr" id="a3c" style="left:1240px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
+      <div class="mn chip ctr" id="a3d" style="left:1350px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
+      <div class="mn chip ctr" id="a3e" style="left:1460px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ SAP</span></div></div>
+      <div class="note r ctr" id="nA3" style="left:1704px;top:630px">
         <div class="nt">One connector per channel</div>
         <div class="nd">Five separate connectors as things stand today, one per platform we currently know of. Each has its own line into SAP and its own line back out. APPSeConnect is the one serving Shopify.</div>
       </div>
 
-      <div class="mn blue ctr" id="a4" style="left:600px;top:800px;width:340px;height:76px">
+      <div class="mn blue ctr" id="a4" style="left:1240px;top:800px;width:340px;height:76px">
         <div><b>SAP</b><span class="sm">order lands · stock decrements · one number out to all five</span></div>
       </div>
-      <div class="note blue l ctr" id="nA4" style="left:170px;top:800px">
+      <div class="note blue r ctr" id="nA4" style="left:1704px;top:800px">
         <div class="nt">SAP, the source of truth</div>
         <div class="nd">Every order lands here and stock decrements immediately. SAP owns the number and publishes the same one to all five channels at once, so none of them drifts out of step.</div>
       </div>
 
       <!-- ================= LANE B : CLIENT PROPOSED ================= -->
-      <div class="mn oval chip cust ctr" id="b1s" style="left:1029px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Shopify</span></div></div>
-      <div class="mn oval chip cust ctr" id="b1a" style="left:1149px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Net32</span></div></div>
-      <div class="mn oval chip cust ctr" id="b1b" style="left:1259px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Dentira</span></div></div>
-      <div class="mn oval chip cust ctr" id="b1c" style="left:1369px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on ZenOne</span></div></div>
-      <div class="mn oval chip cust ctr" id="b1d" style="left:1479px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on other platforms</span></div></div>
-      <div class="ftag ord" id="shopTag" style="left:1029px;top:555px">direct to Shopify</div>
-      <div class="note r ctr" id="nB1" style="left:1704px;top:290px">
+      <div class="mn oval chip cust ctr" id="b1s" style="left:375px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Shopify</span></div></div>
+      <div class="mn oval chip cust ctr" id="b1a" style="left:495px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Net32</span></div></div>
+      <div class="mn oval chip cust ctr" id="b1b" style="left:605px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on Dentira</span></div></div>
+      <div class="mn oval chip cust ctr" id="b1c" style="left:715px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on ZenOne</span></div></div>
+      <div class="mn oval chip cust ctr" id="b1d" style="left:825px;top:290px;width:100px;height:54px"><div><b>Customers</b><span class="sm">on other platforms</span></div></div>
+      <div class="ftag ord" id="shopTag" style="left:375px;top:555px">direct to Shopify</div>
+      <div class="note l ctr" id="nB1" style="left:170px;top:290px">
         <div class="nt">The same five customer bases</div>
         <div class="nd">Shopify's own shoppers still buy on Shopify, so their orders enter at the relay itself. The other four platforms' buyers reach it through their own connectors first.</div>
       </div>
 
-      <div class="mn chip ctr" id="b2a" style="left:1149px;top:460px;width:100px;height:54px"><div><b>Net32</b></div></div>
-      <div class="mn chip ctr" id="b2b" style="left:1259px;top:460px;width:100px;height:54px"><div><b>Dentira</b></div></div>
-      <div class="mn chip ctr" id="b2c" style="left:1369px;top:460px;width:100px;height:54px"><div><b>ZenOne</b></div></div>
-      <div class="mn chip ctr" id="b2d" style="left:1479px;top:460px;width:100px;height:54px"><div><b>Other platforms</b></div></div>
-      <div class="note r ctr" id="nB2" style="left:1704px;top:460px">
+      <div class="mn chip ctr" id="b2a" style="left:495px;top:460px;width:100px;height:54px"><div><b>Net32</b></div></div>
+      <div class="mn chip ctr" id="b2b" style="left:605px;top:460px;width:100px;height:54px"><div><b>Dentira</b></div></div>
+      <div class="mn chip ctr" id="b2c" style="left:715px;top:460px;width:100px;height:54px"><div><b>ZenOne</b></div></div>
+      <div class="mn chip ctr" id="b2d" style="left:825px;top:460px;width:100px;height:54px"><div><b>Other platforms</b></div></div>
+      <div class="note l ctr" id="nB2" style="left:170px;top:460px">
         <div class="nt">Four channels, Shopify has moved</div>
         <div class="nd">Shopify is no longer beside the others. It has been moved underneath, as the layer all four have to pass through to reach SAP.</div>
       </div>
 
-      <div class="mn chip ctr" id="b3a" style="left:1149px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
-      <div class="mn chip ctr" id="b3b" style="left:1259px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
-      <div class="mn chip ctr" id="b3c" style="left:1369px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
-      <div class="mn chip ctr" id="b3d" style="left:1479px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
-      <div class="note r ctr" id="nB3" style="left:1704px;top:630px">
+      <div class="mn chip ctr" id="b3a" style="left:495px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
+      <div class="mn chip ctr" id="b3b" style="left:605px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
+      <div class="mn chip ctr" id="b3c" style="left:715px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
+      <div class="mn chip ctr" id="b3d" style="left:825px;top:630px;width:100px;height:58px"><div><b>Connector</b><span class="sm">→ Shopify</span></div></div>
+      <div class="note l ctr" id="nB3" style="left:170px;top:630px">
         <div class="nt">Still one connector per channel</div>
         <div class="nd">The connector count is unchanged. Each one just points at Shopify instead of SAP, and still has to be built, mapped and maintained.</div>
       </div>
 
-      <div class="mn risk ctr" id="b4" style="left:1314px;top:800px;width:340px;height:80px">
-        <div><b>Shopify, acting as a mini ERP</b><span class="sm">routing orders · holding stock · pricing it has no model for</span></div>
+      <div class="mn risk ctr" id="b4" style="left:660px;top:800px;width:340px;height:80px">
+        <div><b>Shopify as OMS + Ecommerce</b><span class="sm">order management for all five channels, on top of its own storefront</span></div>
       </div>
-      <div class="note risk r ctr" id="nB4" style="left:1704px;top:800px">
-        <div class="nt">Shopify asked to be a mini ERP</div>
-        <div class="nd">Order routing, inventory master, channel fan-out and B2B pricing are ERP jobs. This shape asks a storefront platform to do all four, for marketplace and GPO traffic it has no native model for.</div>
+      <div class="note risk l ctr" id="nB4" style="left:170px;top:800px">
+        <div class="nt">Shopify as OMS and storefront at once</div>
+        <div class="nd">Here Shopify is both the shop and the order management system for every other channel. Routing orders, holding stock and pricing GPO contracts are OMS and ERP jobs, asked of a platform built to run a storefront.</div>
       </div>
 
-      <div class="mn neck ctr" id="b5" style="left:1314px;top:970px;width:250px;height:66px">
+      <div class="mn neck ctr" id="b5" style="left:660px;top:970px;width:250px;height:66px">
         <div><b>APPSeConnect</b><span class="sm">all five channels, one path</span></div>
       </div>
-      <div class="note risk r ctr" id="nB5" style="left:1704px;top:970px">
+      <div class="note risk l ctr" id="nB5" style="left:170px;top:970px">
         <div class="nt">The bottleneck</div>
         <div class="nd">One connector now carries every order and every stock update for all five channels, in both directions. At peak they queue behind each other, and a rate limit or retry here slows all five at once.</div>
       </div>
 
-      <div class="mn blue ctr" id="b6" style="left:1314px;top:1140px;width:340px;height:76px">
+      <div class="mn blue ctr" id="b6" style="left:660px;top:1140px;width:340px;height:76px">
         <div><b>SAP</b><span class="sm">order lands · stock decrements</span></div>
       </div>
-      <div class="note blue r ctr" id="nB6" style="left:1704px;top:1140px">
+      <div class="note blue l ctr" id="nB6" style="left:170px;top:1140px">
         <div class="nt">SAP, two hops later</div>
         <div class="nd">The order finally lands and stock decrements. The new number then has to travel the same two hops back out before any channel sees it.</div>
       </div>
 
       <!-- the funnel warning, sitting on the shared trunk -->
-      <div class="ftag neck" id="btag" style="left:1314px;top:900px">⚠ all five channels squeeze through here</div>
+      <div class="ftag neck" id="btag" style="left:660px;top:900px">⚠ all five channels squeeze through here</div>
 
       <!-- ---- the marker line: where the recommended flow has already finished ---- -->
-      <div class="markcard ctr" id="markCard" style="left:170px;top:936px">
+      <div class="markcard ctr" id="markCard" style="left:1704px;top:936px">
         By here the recommended flow has already landed in SAP. The client proposed flow is only as far as Shopify.
       </div>
 
-      <div class="ftag good" id="tagA" style="left:600px;top:872px">1 hop each way</div>
-      <div class="ftag bad"  id="tagB" style="left:1314px;top:1220px">2 hops each way</div>
+      <div class="ftag good" id="tagA" style="left:1240px;top:872px">1 hop each way</div>
+      <div class="ftag bad"  id="tagB" style="left:660px;top:1220px">2 hops each way</div>
 
       <!-- the empty half of lane A is the point, so it gets said out loud -->
-      <div class="lanenote" id="laneNote" style="left:600px;top:1068px;width:320px">
+      <div class="lanenote" id="laneNote" style="left:1240px;top:1068px;width:320px">
         Nothing further to draw.
         <span>The order is already in SAP, and the new stock number is already on its way back out to every channel.</span>
       </div>
 
-      <div class="sticky ctr" id="sticky" style="left:600px;top:1290px">
+      <div class="sticky ctr" id="sticky" style="left:1240px;top:1290px">
         <div class="st">Board note</div>
         <div class="sb">Both shapes cost five connectors, one per platform we know of today, and routing through Shopify does not save one. Four of them just stop at Shopify instead of SAP, and everything then funnels through the fifth.</div>
       </div>
 
-      <div class="sticky red ctr" id="stickyB" style="left:1314px;top:1330px">
+      <div class="sticky red ctr" id="stickyB" style="left:660px;top:1330px">
         <div class="st">Congestion</div>
         <div class="sb">Five channels of orders and five channels of stock updates share one connector, in both directions. That single path is where traffic backs up at peak, and where one failure takes the whole business offline.</div>
       </div>
 
       <!-- ================= PANEL: RECOMMENDED ================= -->
-      <div class="panel rec" id="pProp" style="left:40px;top:1600px;width:420px">
+      <div class="panel rec" id="pProp" style="left:496px;top:1600px;width:420px">
+        <p class="popt">Option two</p>
         <h3>Recommended</h3>
         <p class="psub">Every channel connects directly to SAP</p>
         <div class="rule"></div>
@@ -460,7 +466,8 @@
       </div>
 
       <!-- ================= PANEL: CLIENT PROPOSED ================= -->
-      <div class="panel cli" id="pClient" style="left:496px;top:1600px;width:420px">
+      <div class="panel cli" id="pClient" style="left:40px;top:1600px;width:420px">
+        <p class="popt">Option one</p>
         <h3>Client proposed</h3>
         <p class="psub">Every channel routes through Shopify to reach SAP</p>
         <div class="rule"></div>
@@ -488,8 +495,8 @@
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
-          <div class="t">Shopify asked to work as a mini ERP</div>
-          <div class="d">Order routing, inventory master, channel fan-out and B2B pricing are ERP jobs. This shape asks a storefront platform to do all of them, and Shopify was never built for that.</div>
+          <div class="t">Shopify asked to be the order manager too</div>
+          <div class="d">Routing every channel's orders, holding the stock number and pricing GPO contracts are OMS and ERP jobs. This shape asks Shopify to run them alongside its own storefront, which is not what it was built for.</div>
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
@@ -519,18 +526,17 @@
         <p class="psub">Same five connectors on today's known platforms, here is what actually differs</p>
         <div class="rule"></div>
 
-        <div class="row hd"><div>What we compared</div><div style="text-align:center">Recommended</div><div style="text-align:center">Client proposed</div></div>
-        <div class="row"><div class="k">Steps an order takes to reach SAP</div><div class="v win">1</div><div class="v lose">2</div></div>
-        <div class="row"><div class="k">Times an order is re-mapped on the way</div><div class="v win">1</div><div class="v lose">2</div></div>
+        <div class="row hd"><div>What we compared</div><div style="text-align:center">Option one<br>Client proposed</div><div style="text-align:center">Option two<br>Recommended</div></div>
+        <div class="row"><div class="k">Steps an order takes to reach SAP</div><div class="v lose">2</div><div class="v win">1</div></div>
         <div class="row"><div class="k">Connectors to build and maintain</div><div class="v tie">5</div><div class="v tie">5</div></div>
-        <div class="row"><div class="k">Channels forced through the same connector</div><div class="v win">0</div><div class="v lose">5</div></div>
-        <div class="row"><div class="k">Traffic jams when orders spike</div><div class="v win">No</div><div class="v lose">Yes</div></div>
-        <div class="row"><div class="k">Separate routes into SAP</div><div class="v win">5</div><div class="v lose">1</div></div>
-        <div class="row"><div class="k">Channels that stop selling if one thing breaks</div><div class="v win">1</div><div class="v lose">All</div></div>
-        <div class="row"><div class="k">Shopify asked to do ERP work</div><div class="v win">No</div><div class="v lose">Yes</div></div>
-        <div class="row"><div class="k">Handles GPO and contract pricing natively</div><div class="v win">Yes</div><div class="v lose">No</div></div>
-        <div class="row"><div class="k">Products stuck in Shopify that never sell there</div><div class="v win">No</div><div class="v lose">Yes</div></div>
-        <div class="row"><div class="k">Shopify's own sales reports stay accurate</div><div class="v win">Yes</div><div class="v lose">No</div></div>
+        <div class="row"><div class="k">Channels forced through the same connector</div><div class="v lose">5</div><div class="v win">0</div></div>
+        <div class="row"><div class="k">Traffic jams when orders spike</div><div class="v lose">Yes</div><div class="v win">No</div></div>
+        <div class="row"><div class="k">Separate routes into SAP</div><div class="v lose">1</div><div class="v win">5</div></div>
+        <div class="row"><div class="k">Channels that stop selling if one thing breaks</div><div class="v lose">All</div><div class="v win">1</div></div>
+        <div class="row"><div class="k">Shopify asked to run order management too</div><div class="v lose">Yes</div><div class="v win">No</div></div>
+        <div class="row"><div class="k">Handles GPO and contract pricing natively</div><div class="v lose">No</div><div class="v win">Yes</div></div>
+        <div class="row"><div class="k">Products stuck in Shopify that never sell there</div><div class="v lose">Yes</div><div class="v win">No</div></div>
+        <div class="row"><div class="k">Shopify's own sales reports stay accurate</div><div class="v lose">No</div><div class="v win">Yes</div></div>
 
         <p class="foot">Five is the count for the platforms we know of today. A platform added later adds one connector to either option, so the tie holds, and it also adds one more channel to the queue on the client proposed side.</p>
 
@@ -699,13 +705,13 @@ mergeInto(B_CN, 'b4');
 trunk('b4','b5');
 trunk('b5','b6');
 
-[['nA1','a1a'],['nA2','a2a'],['nA3','a3a'],['nA4','a4'],
- ['nB1','b1d'],['nB2','b2d'],['nB3','b3d'],['nB4','b4'],['nB5','b5'],['nB6','b6']]
+[['nA1','a1e'],['nA2','a2e'],['nA3','a3e'],['nA4','a4'],
+ ['nB1','b1s'],['nB2','b2a'],['nB3','b3a'],['nB4','b4'],['nB5','b5'],['nB6','b6']]
   .forEach(([n,s])=>leader(n,s));
 
 /* the marker line: both lanes are drawn at the same distance per hop, so this is
-   the moment the recommended flow is done and the client shape is still mid relay */
-draw('M '+(box('markCard').r+14)+' '+markY+' H 1552', C.grey, {width:1.4, dash:'6 6', head:false, opacity:.5});
+   the moment option two is done and option one is still mid relay */
+draw('M '+(box('markCard').l-14)+' '+markY+' H 322', C.grey, {width:1.4, dash:'6 6', head:false, opacity:.5});
 
 /* ---------- 4. zoom: fit the whole board, or read it at full size and pan ---------- */
 const wrap=document.getElementById('stageWrap');
