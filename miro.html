@@ -138,7 +138,7 @@
     border-bottom:1px solid var(--line);padding-bottom:6px}
   .score .k{line-height:1.3}
   .score .v{text-align:center;font-weight:800;font-size:12px}
-  .score .v.win{color:var(--pro)} .score .v.lose{color:var(--risk)}
+  .score .v.win{color:var(--pro)} .score .v.lose{color:var(--risk)} .score .v.tie{color:var(--muted)}
   .callout{margin-top:18px;background:var(--sap);color:#fff;text-align:center;
     padding:13px 14px;font-size:12px;font-weight:650;line-height:1.4}
 
@@ -272,8 +272,8 @@
         <div><b>APPSeConnect</b></div>
       </div>
       <div class="note r ctr" id="nB5" style="left:1230px;top:970px">
-        <div class="nt">The sixth integration</div>
-        <div class="nd">In our proposal this is simply Shopify's own connector. Here it carries every other channel's traffic too, which makes it the narrowest point in the system.</div>
+        <div class="nt">The one shared trunk</div>
+        <div class="nd">The same connector as in our proposal — but doing a different job. Instead of serving Shopify alone it carries all five channels' traffic, which makes it the narrowest point in the system.</div>
       </div>
 
       <div class="mn blue ctr" id="b6" style="left:930px;top:1140px;width:252px;height:76px">
@@ -301,7 +301,7 @@
       <!-- ---- board comment, printed instead of pinned ---- -->
       <div class="sticky ctr" id="sticky" style="left:480px;top:1290px">
         <div class="st">Board note</div>
-        <div class="sb">Routing through Shopify doesn't retire any of the five channel connectors — those get built either way. It adds a sixth integration on top of them.</div>
+        <div class="sb">Both shapes cost five connectors — routing through Shopify doesn't save one. Four of them just stop at Shopify instead of SAP, and everything then funnels through the fifth.</div>
       </div>
 
       <!-- ================= PANEL: OUR PROPOSAL ================= -->
@@ -333,8 +333,8 @@
         </div></div>
 
         <div class="item p"><div class="mk">+</div><div>
-          <div class="t">No extra integration</div>
-          <div class="d">Shopify is one of the five channels, not a hub. The connector count is identical either way.</div>
+          <div class="t">No connector does double duty</div>
+          <div class="d">Shopify is one of the five channels, not a hub. Both shapes cost five connectors — here each one serves a single channel rather than one of them carrying the other four.</div>
         </div></div>
 
         <div class="item p"><div class="mk">+</div><div>
@@ -379,8 +379,8 @@
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
-          <div class="t">One extra integration</div>
-          <div class="d">Every channel still needs its own connector; they just point at Shopify. Add APPSeConnect and it is six integrations, not five.</div>
+          <div class="t">Every order is translated twice</div>
+          <div class="d">A Dentira order is mapped into Shopify's model, then Shopify's model into SAP's — two translations per message, through a middle model with no GPO terms to hold. Direct-to-SAP maps it once.</div>
         </div></div>
 
         <div class="item c"><div class="mk">−</div><div>
@@ -407,7 +407,8 @@
 
         <div class="row hd"><div>Criterion</div><div style="text-align:center">Proposal</div><div style="text-align:center">Initial</div></div>
         <div class="row"><div class="k">Hops per order &amp; per stock update</div><div class="v win">1</div><div class="v lose">2</div></div>
-        <div class="row"><div class="k">Integrations to build &amp; maintain</div><div class="v win">5</div><div class="v lose">6</div></div>
+        <div class="row"><div class="k">Integrations to build &amp; maintain</div><div class="v tie">5</div><div class="v tie">5</div></div>
+        <div class="row"><div class="k">Translations per order &amp; per stock update</div><div class="v win">1</div><div class="v lose">2</div></div>
         <div class="row"><div class="k">Channels lost to one outage</div><div class="v win">1</div><div class="v lose">All</div></div>
         <div class="row"><div class="k">Native B2B / GPO order model</div><div class="v win">Yes</div><div class="v lose">No</div></div>
         <div class="row"><div class="k">Storefront analytics stay clean</div><div class="v win">Yes</div><div class="v lose">No</div></div>
@@ -423,7 +424,7 @@
 
         <div class="item"><div>
           <div class="t">Where we landed</div>
-          <div class="d">Direct-to-SAP costs the same number of connectors and removes a hop from every order and every stock update. Routing through Shopify adds a sixth integration and a shared point of failure without retiring any of the other five.</div>
+          <div class="d">Both shapes cost five connectors, so the choice isn't about how many get built — it's about how they're wired. Direct-to-SAP removes a hop and a translation from every order and every stock update; the relay saves neither, and puts all five channels behind one path.</div>
         </div></div>
 
         <div class="item"><div>
@@ -438,7 +439,7 @@
 
         <div class="item"><div>
           <div class="t">If Shopify is still the preferred hub</div>
-          <div class="d">Then we scope it openly: budget for the sixth integration, a custom mapping for GPO and contract orders, and a reconciliation process that checks both hops.</div>
+          <div class="d">Then we scope it openly: budget for the second translation layer, a custom mapping for GPO and contract orders, and a reconciliation process that checks both hops.</div>
         </div></div>
       </div>
 
